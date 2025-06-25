@@ -76,7 +76,6 @@ final class Application
         $this->registerProvider(new Providers\EnvironmentProvider($this));
         $this->registerProvider(new Providers\IgnitionProvider($this));
         $this->registerProvider(new Providers\ViewProvider($this));
-        $this->registerProvider(new Providers\DatabaseProvider($this));
     }
 
     private function bootProviders(): void

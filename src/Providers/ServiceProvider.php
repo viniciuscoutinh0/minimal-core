@@ -9,7 +9,7 @@ use Viniciuscoutinh0\Minimal\Contracts\ServiceProviderInterface;
 
 abstract class ServiceProvider implements ServiceProviderInterface
 {
-    public function __construct(protected Application $app)
+    public function __construct(protected ?Application $app = null)
     {
     }
 }

@@ -10,17 +10,46 @@ final class Request
 {
     use StaticConstruct;
 
+    private InputBag $query;
+
+    private InputBag $request;
+
+    private ServerBag $server;
+
+    private InputBag $cookie;
+
     public function __construct(
-        private array $get,
-        private array $post,
-        private array $server,
-        private array $cookies,
-        private array $files,
+         array $get,
+         array $post,
+         array $server,
+         array $cookies,
     ) {
+        $this->query = new InputBag($get);
+
+        $this->request = new InputBag($post);
+
+        $this->server = new ServerBag($server);
+
+        $this->cookie = new InputBag($cookies);
     }
 
-    public function method(): string
+    public function query(): InputBag
     {
-        return $this->server['REQUEST_METHOD'];
+        return $this->query;
+    }
+
+    public function request(): InputBag
+    {
+        return $this->request;
+    }
+
+    public function server(): ServerBag
+    {
+        return $this->server;
+    }
+
+    public function cookie(): InputBag
+    {
+        return $this->cookie;
     }
 }
