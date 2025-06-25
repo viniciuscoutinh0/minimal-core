@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Viniciuscoutinh0\Minimal;
 
+use LogicException;
 use Viniciuscoutinh0\Minimal\Providers\ServiceProvider;
 
 final class Application
@@ -19,13 +20,13 @@ final class Application
 
     private Vite $vite;
 
+    private bool $isBooted = false;
+
     private function __construct(private ?string $basePath = null)
     {
         $this->registerDefaultProviders();
 
-        $this->bootProviders();
-
-        $this->request ??= Request::make($_GET, $_POST, $_SERVER, $_COOKIE, $_FILES);
+        $this->request ??= Request::make($_GET, $_POST, $_SERVER, $_COOKIE);
 
         $this->response ??= Response::make();
 
@@ -73,7 +74,13 @@ final class Application
 
     public function boot(): void
     {
+        if ($this->isBooted) {
+            throw new LogicException('Application is already booted');
+        }
+
         $this->bootProviders();
+
+        $this->isBooted = true;
     }
 
     private function registerDefaultProviders(): void
