@@ -12,13 +12,13 @@ final class Vite
     use StaticConstruct;
 
     public function __construct(
+        protected string $manifestPath,
         protected ?string $host = null,
         protected ?int $port = null,
-        protected ?string $manifestPath = null,
     ) {
         ['scheme' => $schema, 'host' => $host, 'port' => $port] = parse_url(env('VITE_API_URL', 'http://localhost:5173'));
 
-        $this->host = "{$schema}{$host}";
+        $this->host = "{$schema}://{$host}";
         $this->port = (int) $port;
     }
 
@@ -45,7 +45,7 @@ final class Vite
 
     public function manifest(): array
     {
-        $path = $this->manifestPath ?? __DIR__.'/../public/dist/.vite/manifest.json';
+        $path = $this->manifestPath.'/public/dist/.vite/manifest.json';
 
         if (! file_exists($path)) {
             throw new RuntimeException('Manifest not found, run `npm run build` first');

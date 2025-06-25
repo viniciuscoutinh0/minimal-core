@@ -34,7 +34,7 @@ final class Application
 
         $this->response ??= Response::make();
 
-        $this->vite ??= Vite::make();
+        $this->vite ??= Vite::make(manifestPath: $basePath);
     }
 
     public static function make(?string $basePath = null): self
