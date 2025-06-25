@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Viniciuscoutinh0\Minimal\Database;
 
-final class Query
+use PDO;
+
+final class QueryBuilder
 {
-    public function __construct(private Connection $connection)
+    public function __construct(private PDO $pdo)
     {
     }
 }

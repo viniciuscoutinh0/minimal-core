@@ -30,7 +30,7 @@ final class Application
     {
         $this->registerDefaultProviders();
 
-        $this->request ??= Request::make($_GET, $_POST, $_SERVER, $_COOKIE);
+        $this->request ??= Request::make();
 
         $this->response ??= Response::make();
 
