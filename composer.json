@@ -13,7 +13,10 @@
     "autoload": {
         "psr-4": {
             "Viniciuscoutinh0\\Minimal\\": "src/"
-        }
+        },
+        "files": [
+            "src/Helpers.php"
+        ]
     },
     "authors": [
         {

@@ -16,7 +16,7 @@ final class Vite
         protected ?int $port = null,
         protected ?string $manifestPath = null,
     ) {
-        [$schema, $host, $port] = parse_url(env('VITE_API_URL'));
+        ['scheme' => $schema, 'host' => $host, 'port' => $port] = parse_url(env('VITE_API_URL', 'http://localhost:5173'));
 
         $this->host = "{$schema}{$host}";
         $this->port = (int) $port;
