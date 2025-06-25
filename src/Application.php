@@ -71,6 +71,11 @@ final class Application
         return $this->vite;
     }
 
+    public function boot(): void
+    {
+        $this->bootProviders();
+    }
+
     private function registerDefaultProviders(): void
     {
         $this->registerProvider(new Providers\EnvironmentProvider($this));
