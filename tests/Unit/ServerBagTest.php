@@ -5,14 +5,7 @@ declare(strict_types=1);
 use Viniciuscoutinh0\Minimal\Request;
 
 beforeEach(function (): void {
-    $request = new Request(
-        $_GET,
-        $_POST,
-        $_SERVER,
-        $_COOKIE,
-    );
-
-    $this->server = $request->server();
+    $this->server = Request::make()->server();
 });
 
 it('returns all server parameters', function (): void {

@@ -5,12 +5,7 @@ declare(strict_types=1);
 use Viniciuscoutinh0\Minimal\Request;
 
 beforeEach(function (): void {
-    $this->request = new Request(
-        $_GET,
-        $_POST,
-        $_SERVER,
-        $_COOKIE,
-    );
+    $this->request = Request::make();
 });
 
 it('set query string parameter', function (): void {

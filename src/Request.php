@@ -4,12 +4,8 @@ declare(strict_types=1);
 
 namespace Viniciuscoutinh0\Minimal;
 
-use Viniciuscoutinh0\Minimal\Concerns\StaticConstruct;
-
-final class Request
+final readonly class Request
 {
-    use StaticConstruct;
-
     private InputBag $query;
 
     private InputBag $request;
@@ -19,10 +15,10 @@ final class Request
     private InputBag $cookie;
 
     public function __construct(
-         array $get,
-         array $post,
-         array $server,
-         array $cookies,
+        array $get,
+        array $post,
+        array $server,
+        array $cookies,
     ) {
         $this->query = new InputBag($get);
 
@@ -31,6 +27,11 @@ final class Request
         $this->server = new ServerBag($server);
 
         $this->cookie = new InputBag($cookies);
+    }
+
+    public static function make(): self
+    {
+        return new self($_GET, $_POST, $_SERVER, $_COOKIE);
     }
 
     public function query(): InputBag

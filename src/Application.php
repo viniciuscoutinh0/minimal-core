@@ -20,6 +20,10 @@ final class Application
 
     private Vite $vite;
 
+    private ?string $locale = null;
+
+    private ?string $timezone = null;
+
     private bool $isBooted = false;
 
     private function __construct(private ?string $basePath = null)
@@ -45,6 +49,30 @@ final class Application
     public function basePath(): ?string
     {
         return $this->basePath;
+    }
+
+    public function locale(): ?string
+    {
+        return $this->locale;
+    }
+
+    public function configureLocale(string $locale): self
+    {
+        $this->locale = $locale;
+
+        return $this;
+    }
+
+    public function timezone(): ?string
+    {
+        return $this->timezone;
+    }
+
+    public function configureTimezone(string $timezone): self
+    {
+        $this->timezone = $timezone;
+
+        return $this;
     }
 
     public function registerProvider(ServiceProvider $provider): void
@@ -79,6 +107,12 @@ final class Application
         }
 
         $this->bootProviders();
+
+        $this->configureLocale(env('APP_LOCALE', 'en'));
+
+        $this->configureTimezone(env('APP_TIMEZONE', 'UTC'));
+
+        date_default_timezone_set($this->timezone());
 
         $this->isBooted = true;
     }
