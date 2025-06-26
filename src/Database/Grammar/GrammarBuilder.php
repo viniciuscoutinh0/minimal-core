@@ -18,8 +18,9 @@ final class GrammarBuilder implements BuilderInterface, SelectInterface, TableIn
 
     private bool $withDistinct = false;
 
-    private array $columns = ['*'];
+    private array $columns = [];
 
+    /** @var WhereClause[] */
     private array $wheres = [];
 
     public function table(string $table): SelectInterface|WhereInterface
@@ -31,7 +32,7 @@ final class GrammarBuilder implements BuilderInterface, SelectInterface, TableIn
 
     public function select(...$columns): WhereInterface
     {
-        $this->columns = $columns;
+        $this->columns = count($columns) ? $columns : ['*'];
 
         return $this;
     }
