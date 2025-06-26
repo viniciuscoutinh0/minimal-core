@@ -33,7 +33,7 @@ final class GrammarBuilder implements BuilderInterface, SelectInterface, TableIn
 
     public function select(...$columns): WhereInterface
     {
-        $this->columns = count($columns) ? $columns : ['*'];
+        $this->columns = $columns;
 
         return $this;
     }
@@ -90,6 +90,10 @@ final class GrammarBuilder implements BuilderInterface, SelectInterface, TableIn
 
     private function normalizeColumns(): string
     {
+        if (! count($this->columns)) {
+            return '*';
+        }
+
         return implode(', ', $this->columns);
     }
 
