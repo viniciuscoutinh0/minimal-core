@@ -4,69 +4,32 @@ declare(strict_types=1);
 
 namespace Viniciuscoutinh0\Minimal\Database;
 
-use PDO;
-use PDOStatement;
-use Viniciuscoutinh0\Minimal\Database\Contracts\QueryInterface;
-use Viniciuscoutinh0\Minimal\Database\Grammar\GrammarBuilder;
-
-abstract class Model implements QueryInterface
+abstract class Model
 {
-    protected Connection $connection;
-
     protected string $table;
 
     protected string $primaryKey = 'id';
 
-    protected array $attributes = [];
-
-    public function __construct()
+    final public function connection(): Connection
     {
-        $this->connection = Connection::instance();
+        return Connection::instance();
     }
 
-    public function __call($name, $arguments)
+    final public function query(): QueryBuilder
     {
-        return $this->query()->{$name}(...$arguments);
+        return new QueryBuilder(
+            model: $this,
+            pdo: $this->connection()->pdo(),
+        );
     }
 
-    public function __toString(): string
+    final public function table(): string
     {
-        return $this->toJson();
+        return $this->table;
     }
 
-    final public function query(): GrammarBuilder
+    final public function primaryKey(): string
     {
-        return (new GrammarBuilder)->table($this->table);
-    }
-
-    final public function first(...$columns): ?static
-    {
-        $query = $this->query()->select(...$columns);
-
-        $statement = $this->prepareStatement($query);
-
-        return $statement->fetchObject(static::class) ?? null;
-    }
-
-    final public function all(): array
-    {
-        $query = $this->query();
-
-        $statement = $this->prepareStatement($query);
-
-        return $statement->fetchAll(PDO::FETCH_CLASS, static::class);
-    }
-
-    private function prepareStatement(GrammarBuilder $query): PDOStatement
-    {
-        $pdo = $this->connection->pdo();
-
-        $statement = $pdo->prepare($query->toSql(), [
-            PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL,
-        ]);
-
-        $statement->execute($query->bindings());
-
-        return $statement;
+        return $this->primaryKey;
     }
 }
