@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Viniciuscoutinh0\Minimal;
 
 use LogicException;
+use Symfony\Component\Console\Input\Input;
 use Viniciuscoutinh0\Minimal\Providers\ServiceProvider;
 
 final class Application
@@ -80,9 +81,24 @@ final class Application
         $this->providers[] = $provider;
     }
 
-    public function request(): Request
+    public function query(): InputBag
     {
-        return $this->request;
+        return $this->request->query();
+    }
+
+    public function request(): InputBag
+    {
+        return $this->request->request();
+    }
+
+    public function server(): ServerBag
+    {
+        return $this->request->server();
+    }
+
+    public function cookie(): InputBag
+    {
+        return $this->request->cookie();
     }
 
     public function response(): Response
