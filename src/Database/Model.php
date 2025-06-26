@@ -30,6 +30,11 @@ abstract class Model implements JsonSerializable
         $this->attributes[$key] = $value;
     }
 
+    public function __toString(): string
+    {
+        return $this->toJson();
+    }
+
     final public static function newQuery(): QueryBuilder
     {
         return (new static)->query();
@@ -79,5 +84,10 @@ abstract class Model implements JsonSerializable
     final public function toJson(): string
     {
         return json_encode($this->toArray());
+    }
+
+    final public function jsonSerialize(): mixed
+    {
+        return $this->toArray();
     }
 }
