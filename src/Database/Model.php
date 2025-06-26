@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Viniciuscoutinh0\Minimal\Database;
 
-abstract class Model
+use Illuminate\Support\Collection;
+use JsonSerializable;
+
+abstract class Model implements JsonSerializable
 {
     protected string $table;
 
@@ -15,8 +18,6 @@ abstract class Model
     public function __construct(array $attributes = [])
     {
         $this->fill($attributes);
-
-        $this->table = \Illuminate\Support\Str::singular(class_basename(static::class));
     }
 
     public function __get(string $key): mixed
@@ -63,5 +64,20 @@ abstract class Model
     final public function primaryKey(): string
     {
         return $this->primaryKey;
+    }
+
+    final public function toArray(): array
+    {
+        return $this->attributes;
+    }
+
+    final public function toCollection(): Collection
+    {
+        return collect($this->toArray());
+    }
+
+    final public function toJson(): string
+    {
+        return json_encode($this->toArray());
     }
 }
