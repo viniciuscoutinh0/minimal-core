@@ -15,6 +15,7 @@ final class QueryBuilder
 
     public function __construct(
         private readonly Model $model,
+        private readonly string $baseClass,
         private readonly PDO $pdo,
     ) {
         $this->grammar = new GrammarBuilder;
@@ -49,7 +50,7 @@ final class QueryBuilder
 
         $statement = $this->prepareStatement();
 
-        return $statement->fetchObject($this->model::class) ?? null;
+        return $statement->fetchObject($this->baseClass) ?? null;
     }
 
     public function find(int $id, ...$columns): ?Model
@@ -61,7 +62,7 @@ final class QueryBuilder
 
     public function get(): array
     {
-        return $this->prepareStatement()->fetchAll(PDO::FETCH_CLASS, $this->model::class);
+        return $this->prepareStatement()->fetchAll(PDO::FETCH_CLASS, $this->baseClass);
     }
 
     private function prepareStatement(): PDOStatement

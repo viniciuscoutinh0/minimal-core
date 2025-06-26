@@ -10,6 +10,11 @@ abstract class Model
 
     protected string $primaryKey = 'id';
 
+    final public static function newQuery(): QueryBuilder
+    {
+        return (new static)->query();
+    }
+
     final public function connection(): Connection
     {
         return Connection::instance();
@@ -19,6 +24,7 @@ abstract class Model
     {
         return new QueryBuilder(
             model: $this,
+            baseClass: static::class,
             pdo: $this->connection()->pdo(),
         );
     }
