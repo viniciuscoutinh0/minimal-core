@@ -18,6 +18,7 @@ final class GrammarBuilder implements BuilderInterface, SelectInterface, TableIn
 
     private bool $withDistinct = false;
 
+    /** @var string[] */
     private array $columns = [];
 
     /** @var WhereClause[] */
@@ -37,9 +38,9 @@ final class GrammarBuilder implements BuilderInterface, SelectInterface, TableIn
         return $this;
     }
 
-    public function distinct(): SelectInterface
+    public function distinct(bool $withDistinct = true): SelectInterface
     {
-        $this->withDistinct = true;
+        $this->withDistinct = $withDistinct;
 
         return $this;
     }
