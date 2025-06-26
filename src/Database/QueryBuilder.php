@@ -46,7 +46,7 @@ final class QueryBuilder
 
     public function first(...$columns): ?Model
     {
-        $this->grammar->select($columns);
+        $this->grammar->select(...$columns);
 
         $statement = $this->prepareStatement();
 
@@ -57,11 +57,13 @@ final class QueryBuilder
     {
         $this->grammar->where($this->model->primaryKey(), $id);
 
-        return $this->first($columns);
+        return $this->first(...$columns);
     }
 
-    public function get(): array
+    public function get(...$columns): array
     {
+        $this->grammar->select(...$columns);
+
         return $this->prepareStatement()->fetchAll(PDO::FETCH_CLASS, $this->baseClass);
     }
 
