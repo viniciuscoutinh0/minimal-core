@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Viniciuscoutinh0\Minimal\Database\Drivers;
 
-use Viniciuscoutinh0\Minimal\Database\Contracts\DriverInterface;
+use Viniciuscoutinh0\Minimal\Database\Drivers\Contracts\DriverInterface;
 
 final readonly class MSSQLDriver implements DriverInterface
 {

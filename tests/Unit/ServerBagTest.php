@@ -12,7 +12,7 @@ it('returns all server parameters', function (): void {
     expect($this->server->all())->toBe($_SERVER);
 });
 
-it('retuns request method', function (): void {
+it('returns request method', function (): void {
     $server = new Request([], [], ['REQUEST_METHOD' => 'GET'], [], []);
 
     expect($server->server()->method())->toBe('GET');

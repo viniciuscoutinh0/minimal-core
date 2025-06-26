@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Viniciuscoutinh0\Minimal\Database\Contracts;
+namespace Viniciuscoutinh0\Minimal\Database\Drivers\Contracts;
 
 interface DriverInterface
 {

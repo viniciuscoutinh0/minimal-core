@@ -6,7 +6,7 @@ namespace Viniciuscoutinh0\Minimal\Database;
 
 use PDO;
 use RuntimeException;
-use Viniciuscoutinh0\Minimal\Database\Contracts\DriverInterface;
+use Viniciuscoutinh0\Minimal\Database\Drivers\Contracts\DriverInterface;
 
 final class Connection
 {
