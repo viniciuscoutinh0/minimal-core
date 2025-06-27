@@ -18,21 +18,41 @@ final readonly class MSSQLDriver implements DriverInterface
     ) {
     }
 
+    /**
+     * Get the database connection username.
+     *
+     * @return string
+     */
     public function username(): string
     {
         return $this->username;
     }
 
+    /**
+     * Get the database connection password.
+     *
+     * @return string
+     */
     public function password(): string
     {
         return $this->password;
     }
 
+    /**
+     * Get the database connection options.
+     *
+     * @return array
+     */
     public function options(): array
     {
         return $this->options;
     }
 
+    /**
+     * Get the database connection DSN string.
+     *
+     * @return string
+     */
     public function dsn(): string
     {
         return "sqlsrv:Server={$this->host},{$this->port};Database={$this->database}";
