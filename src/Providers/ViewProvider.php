@@ -8,6 +8,11 @@ use Viniciuscoutinh0\Minimal\View;
 
 final class ViewProvider extends ServiceProvider
 {
+    /**
+     * Register the service provider.
+     *
+     * @return void
+     */
     public function register(): void
     {
         View::share('app', $this->app);
@@ -15,7 +20,13 @@ final class ViewProvider extends ServiceProvider
         View::configureBasePath($this->app->basePath());
     }
 
+    /**
+     * Boot the service provider.
+     *
+     * @return void
+     */
     public function boot(): void
     {
+        //
     }
 }

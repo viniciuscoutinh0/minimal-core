@@ -8,5 +8,10 @@ use Viniciuscoutinh0\Minimal\Database\Grammar\GrammarBuilder;
 
 interface QueryInterface
 {
+    /**
+     * Get a new query builder instance.
+     *
+     * @return GrammarBuilder
+     */
     public function query(): GrammarBuilder;
 }

@@ -11,6 +11,13 @@ final class Response
 {
     use StaticConstruct;
 
+    /**
+     * Set the HTTP status code.
+     *
+     * @param  int  $code
+     * @return self
+     * @throws RuntimeException
+     */
     public function httpStatusCode(int $code): self
     {
         if ($this->isSentHeaders()) {
@@ -22,6 +29,14 @@ final class Response
         return $this;
     }
 
+    /**
+     * Redirect a specific URL.
+     *
+     * @param  string  $url
+     * @param  int  $code
+     * @return void
+     * @throws RuntimeException
+     */
     public function redirect(string $url, int $code = 301): void
     {
         if ($this->isSentHeaders()) {
@@ -35,6 +50,11 @@ final class Response
         exit;
     }
 
+    /**
+     * Check if headers are already sent.
+     *
+     * @return bool
+     */
     private function isSentHeaders(): bool
     {
         return headers_sent();

@@ -24,6 +24,12 @@ final class GrammarBuilder implements BuilderInterface, SelectInterface, TableIn
     /** @var WhereClause[] */
     private array $wheres = [];
 
+    /**
+     * Set the table name
+     *
+     * @param  string  $table
+     * @return SelectInterface|SelectInterface
+     */
     public function table(string $table): SelectInterface|WhereInterface
     {
         $this->table = $table;
@@ -31,6 +37,12 @@ final class GrammarBuilder implements BuilderInterface, SelectInterface, TableIn
         return $this;
     }
 
+    /**
+     * Select columns.
+     *
+     * @param  string[]  ...$columns
+     * @return WhereInterface
+     */
     public function select(...$columns): WhereInterface
     {
         $this->columns = $columns;
@@ -38,6 +50,12 @@ final class GrammarBuilder implements BuilderInterface, SelectInterface, TableIn
         return $this;
     }
 
+    /**
+     * Set the distinct keyword.
+     *
+     * @param  bool  $withDistinct
+     * @return SelectInterface
+     */
     public function distinct(bool $withDistinct = true): SelectInterface
     {
         $this->withDistinct = $withDistinct;
@@ -45,6 +63,14 @@ final class GrammarBuilder implements BuilderInterface, SelectInterface, TableIn
         return $this;
     }
 
+    /**
+     * Add a where clause to the query.
+     *
+     * @param  string  $column
+     * @param  mixed  $value
+     * @param  OperatorEnum  $operator
+     * @return WhereInterface
+     */
     public function where(string $column, mixed $value, OperatorEnum $operator = OperatorEnum::Equal): WhereInterface
     {
         $this->wheres[] = new WhereClause(
@@ -57,6 +83,13 @@ final class GrammarBuilder implements BuilderInterface, SelectInterface, TableIn
         return $this;
     }
 
+    /**
+     * Add a or where clause to the query.
+     *
+     * @param  string  $column
+     * @param  mixed  $value
+     * @param  OperatorEnum  $operator
+     */
     public function orWhere(string $column, mixed $value, OperatorEnum $operator = OperatorEnum::Equal): WhereInterface
     {
         $this->wheres[] = new WhereClause(
@@ -69,6 +102,11 @@ final class GrammarBuilder implements BuilderInterface, SelectInterface, TableIn
         return $this;
     }
 
+    /**
+     * Get the SQL representation of the query.
+     *
+     * @return string
+     */
     public function toSql(): string
     {
         $sql = 'select';
@@ -83,11 +121,21 @@ final class GrammarBuilder implements BuilderInterface, SelectInterface, TableIn
         return $sql;
     }
 
+    /**
+     * Get the bindings for the query.
+     *
+     * @return array
+     */
     public function bindings(): array
     {
         return array_map(fn (WhereClause $whereClause): mixed => $whereClause->value, $this->wheres);
     }
 
+    /**
+     * Normalize the columns.
+     *
+     * @return string
+     */
     private function normalizeColumns(): string
     {
         if (! count($this->columns)) {
@@ -97,6 +145,12 @@ final class GrammarBuilder implements BuilderInterface, SelectInterface, TableIn
         return implode(', ', $this->columns);
     }
 
+    /**
+     * Add the distinct keyword to the query.
+     *
+     * @param  string  $queryString
+     * @return void
+     */
     private function addDistinctKeyword(string &$queryString): void
     {
         if (! $this->withDistinct) {
@@ -106,6 +160,12 @@ final class GrammarBuilder implements BuilderInterface, SelectInterface, TableIn
         $queryString .= ' distinct';
     }
 
+    /**
+     * Add the where clause to the query.
+     *
+     * @param  string  $sql
+     * @return void
+     */
     private function addWhereClause(string &$sql): void
     {
         if (empty($this->wheres)) {

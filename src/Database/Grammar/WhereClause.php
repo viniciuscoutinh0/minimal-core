@@ -7,6 +7,12 @@ namespace Viniciuscoutinh0\Minimal\Database\Grammar;
 use Viniciuscoutinh0\Minimal\Database\Grammar\Enums\BooleanEnum;
 use Viniciuscoutinh0\Minimal\Database\Grammar\Enums\OperatorEnum;
 
+/**
+ * @property string $column
+ * @property OperatorEnum $operator
+ * @property mixed $value
+ * @property BooleanEnum $boolean
+ */
 final readonly class WhereClause
 {
     public function __construct(

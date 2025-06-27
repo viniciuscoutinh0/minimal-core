@@ -10,10 +10,25 @@ use RuntimeException;
 
 abstract class Model implements JsonSerializable
 {
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
     protected string $table;
 
+    /**
+     * The primary key associated with the table.
+     *
+     * @var string
+     */
     protected string $primaryKey = 'id';
 
+    /**
+     * The attributes of the model.
+     *
+     * @var array
+     */
     protected array $attributes = [];
 
     public function __construct(array $attributes = [])
@@ -21,26 +36,55 @@ abstract class Model implements JsonSerializable
         $this->fill($attributes);
     }
 
+    /**
+     * Get an attribute from the model.
+     *
+     * @param  string  $key
+     * @return mixed
+     */
     public function __get(string $key): mixed
     {
         return $this->attributes[$key] ?? null;
     }
 
+    /**
+     * Set an attribute on the model.
+     *
+     * @param  string  $key
+     * @param  mixed  $value
+     * @return void
+     */
     public function __set(string $key, mixed $value): void
     {
         $this->attributes[$key] = $value;
     }
 
+    /**
+     * Get the string representation of the model.
+     *
+     * @return string
+     */
     public function __toString(): string
     {
         return $this->toJson();
     }
 
+    /**
+     * Create a new query builder for the model.
+     *
+     * @return QueryBuilder
+     */
     final public static function newQuery(): QueryBuilder
     {
         return (new static)->query();
     }
 
+    /**
+     * Fill the model with an array of attributes.
+     *
+     * @param  array  $attributes
+     * @return void
+     */
     final public function fill(array $attributes): void
     {
         foreach ($attributes as $key => $value) {
@@ -48,11 +92,21 @@ abstract class Model implements JsonSerializable
         }
     }
 
+    /**
+     * Get the database connection instance.
+     *
+     * @return Connection
+     */
     final public function connection(): Connection
     {
         return Connection::instance();
     }
 
+    /**
+     * Get a new query builder for the model.
+     *
+     * @return QueryBuilder
+     */
     final public function query(): QueryBuilder
     {
         return new QueryBuilder(
@@ -62,26 +116,54 @@ abstract class Model implements JsonSerializable
         );
     }
 
+    /**
+     * Get the table associated with the model.
+     *
+     * @return string
+     */
     final public function table(): string
     {
         return $this->table;
     }
 
+    /**
+     * Get the primary key associated with the table.
+     *
+     * @return string
+     */
     final public function primaryKey(): string
     {
         return $this->primaryKey;
     }
 
+    /**
+     * Get the attributes of the model.
+     *
+     * @return array
+     */
     final public function toArray(): array
     {
         return $this->attributes;
     }
 
+    /**
+     * Get the attributes of the model as a collection.
+     *
+     * @return Collection
+     */
     final public function toCollection(): Collection
     {
         return collect($this->toArray());
     }
 
+    /**
+     * Convert the model to its JSON representation.
+     *
+     * @param  int  $flags
+     * @param  int  $depth
+     * @return string
+     * @throws RuntimeException
+     */
     final public function toJson(int $flags = 0, int $depth = 512): string
     {
         $json = json_encode($this->toArray(), $flags, $depth);
@@ -93,6 +175,11 @@ abstract class Model implements JsonSerializable
         throw new RuntimeException('Unable to convert model to JSON.');
     }
 
+    /**
+     * Convert the model to its JSON representation.
+     *
+     * @return mixed
+     */
     final public function jsonSerialize(): mixed
     {
         return $this->toArray();

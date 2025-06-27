@@ -11,6 +11,11 @@ use Viniciuscoutinh0\Minimal\Database\Grammar\GrammarBuilder;
 
 final class QueryBuilder
 {
+    /**
+     * GrammarBuilder instance.
+     *
+     * @var GrammarBuilder
+     */
     private GrammarBuilder $grammar;
 
     public function __construct(
@@ -23,6 +28,12 @@ final class QueryBuilder
         $this->grammar->table($this->model->table());
     }
 
+    /**
+     * Select columns.
+     *
+     * @param  string[]  ...$columns
+     * @return self
+     */
     public function select(...$columns): self
     {
         $this->grammar->select(...$columns);
@@ -30,6 +41,14 @@ final class QueryBuilder
         return $this;
     }
 
+    /**
+     * Add a where clause to the query.
+     *
+     * @param  string  $column
+     * @param  mixed  $value
+     * @param  OperatorEnum  $operator
+     * @return self
+     */
     public function where(string $column, mixed $value, OperatorEnum $operator = OperatorEnum::Equal): self
     {
         $this->grammar->where($column, $value, $operator);
@@ -37,6 +56,14 @@ final class QueryBuilder
         return $this;
     }
 
+    /**
+     * Add a or where clause to the query.
+     *
+     * @param  string  $column
+     * @param  mixed  $value
+     * @param  OperatorEnum  $operator
+     * @return self
+     */
     public function orWhere(string $column, mixed $value, OperatorEnum $operator = OperatorEnum::Equal): self
     {
         $this->grammar->orWhere($column, $value, $operator);
@@ -44,6 +71,12 @@ final class QueryBuilder
         return $this;
     }
 
+    /**
+     * Get the first record of the query.
+     *
+     * @param  string[]  ...$columns
+     * @return ?Model
+     */
     public function first(...$columns): ?Model
     {
         if (count($columns)) {
@@ -55,6 +88,13 @@ final class QueryBuilder
         return $statement->fetchObject($this->baseClass) ?? null;
     }
 
+    /**
+     * Find a record by its primary key.
+     *
+     * @param  int  $id
+     * @param  string[]  ...$columns
+     * @return ?Model
+     */
     public function find(int $id, ...$columns): ?Model
     {
         $this->grammar->where($this->model->primaryKey(), $id);
@@ -62,6 +102,12 @@ final class QueryBuilder
         return $this->first(...$columns);
     }
 
+    /**
+     * Get all records of the query.
+     *
+     * @param  string[]  ...$columns
+     * @return Model[]
+     */
     public function get(...$columns): array
     {
         if (count($columns)) {
@@ -71,6 +117,21 @@ final class QueryBuilder
         return $this->prepareStatement()->fetchAll(PDO::FETCH_CLASS, $this->baseClass);
     }
 
+    /**
+     * Get the number of records of the query.
+     *
+     * @return int
+     */
+    public function count(): int
+    {
+        return $this->prepareStatement()->rowCount();
+    }
+
+    /**
+     * Prepare the statement.
+     *
+     * @return PDOStatement
+     */
     private function prepareStatement(): PDOStatement
     {
         $pdo = $this->pdo;

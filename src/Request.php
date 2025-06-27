@@ -6,12 +6,32 @@ namespace Viniciuscoutinh0\Minimal;
 
 final readonly class Request
 {
+    /**
+     * InputBag with GET parameters.
+     *
+     * @var InputBag
+     */
     private InputBag $query;
 
+    /**
+     * InputBag with POST parameters.
+     *
+     * @var InputBag
+     */
     private InputBag $request;
 
+    /**
+     * ServerBag with SERVER parameters.
+     *
+     * @var ServerBag
+     */
     private ServerBag $server;
 
+    /**
+     * InputBag with COOKIE parameters.
+     *
+     * @var InputBag
+     */
     private InputBag $cookie;
 
     public function __construct(
@@ -29,26 +49,51 @@ final readonly class Request
         $this->cookie = new InputBag($cookies);
     }
 
+    /**
+     * Create a new request instance.
+     *
+     * @return Request
+     */
     public static function make(): self
     {
         return new self($_GET, $_POST, $_SERVER, $_COOKIE);
     }
 
+    /**
+     * Get query parameters.
+     *
+     * @return InputBag
+     */
     public function query(): InputBag
     {
         return $this->query;
     }
 
+    /**
+     * Get request parameters.
+     *
+     * @return InputBag
+     */
     public function request(): InputBag
     {
         return $this->request;
     }
 
+    /**
+     * Get server parameters.
+     *
+     * @return ServerBag
+     */
     public function server(): ServerBag
     {
         return $this->server;
     }
 
+    /**
+     * Get cookie parameters.
+     *
+     * @return InputBag
+     */
     public function cookie(): InputBag
     {
         return $this->cookie;

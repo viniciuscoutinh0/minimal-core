@@ -10,6 +10,11 @@ use Viniciuscoutinh0\Minimal\Database\Drivers\MSSQLDriver;
 
 final class DatabaseProvider extends ServiceProvider
 {
+    /**
+     * Register the database provider.
+     *
+     * @return void
+     */
     public function register(): void
     {
         Connection::create(new MSSQLDriver(
@@ -28,7 +33,13 @@ final class DatabaseProvider extends ServiceProvider
         ));
     }
 
+    /**
+     * Boot the database provider.
+     *
+     * @return void
+     */
     public function boot(): void
     {
+        //
     }
 }

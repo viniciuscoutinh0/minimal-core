@@ -22,11 +22,22 @@ final class Vite
         $this->port = (int) $port;
     }
 
+    /**
+     * Get the vite url.
+     *
+     * @return string
+     */
     public function url(): string
     {
         return $this->host.':'.$this->port;
     }
 
+    /**
+     * Get the vite asset.
+     *
+     * @param  string  $entry
+     * @return string
+     */
     public function asset(string $entry): string
     {
         return "\n".$this->jsTag($entry)
@@ -34,6 +45,12 @@ final class Vite
         ."\n".$this->cssTag($entry);
     }
 
+    /**
+     * Get the vite asset url.
+     *
+     * @param  string  $entry
+     * @return string
+     */
     public function assetUrl(string $entry): string
     {
         $manifest = $this->manifest();
@@ -43,6 +60,11 @@ final class Vite
             : '';
     }
 
+    /**
+     * Get the vite manifest.
+     *
+     * @return array
+     */
     public function manifest(): array
     {
         $path = $this->manifestPath.'/public/dist/.vite/manifest.json';
@@ -54,6 +76,12 @@ final class Vite
         return json_decode(file_get_contents($path), true);
     }
 
+    /**
+     * Get the vite css urls.
+     *
+     * @param  string  $entry
+     * @return array
+     */
     public function cssUrls(string $entry): array
     {
         $urls = [];
@@ -68,6 +96,12 @@ final class Vite
         return $urls;
     }
 
+    /**
+     * Check if the vite is in dev mode.
+     *
+     * @param  string  $entry
+     * @return bool
+     */
     private function isDevMode(string $entry): bool
     {
         static $exists = null;
@@ -87,6 +121,12 @@ final class Vite
         return $exists = ! $error;
     }
 
+    /**
+     * Get the vite js tag.
+     *
+     * @param  string  $entry
+     * @return string
+     */
     private function jsTag(string $entry): string
     {
         $url = $this->isDevMode($entry)
@@ -105,6 +145,12 @@ final class Vite
         return '<script type="module" src="'.$url.'"></script>';
     }
 
+    /**
+     * Get the vite css tag.
+     *
+     * @param  string  $entry
+     * @return string
+     */
     private function cssTag(string $entry): string
     {
         if ($this->isDevMode($entry)) {
@@ -122,6 +168,12 @@ final class Vite
         return $tags;
     }
 
+    /**
+     * Get the vite js preload imports.
+     *
+     * @param  string  $entry
+     * @return string
+     */
     private function jsPreloadImports(string $entry): string
     {
         if ($this->isDevMode($entry)) {
@@ -138,6 +190,12 @@ final class Vite
         return $res;
     }
 
+    /**
+     * Get the vite imports urls.
+     *
+     * @param  string  $entry
+     * @return array
+     */
     private function importsUrls(string $entry): array
     {
         $urls = [];
