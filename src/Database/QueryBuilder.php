@@ -6,11 +6,14 @@ namespace Viniciuscoutinh0\Minimal\Database;
 
 use PDO;
 use PDOStatement;
+use Viniciuscoutinh0\Minimal\Concerns\When;
 use Viniciuscoutinh0\Minimal\Database\Grammar\Enums\OperatorEnum;
 use Viniciuscoutinh0\Minimal\Database\Grammar\GrammarBuilder;
 
 final class QueryBuilder
 {
+    use When;
+
     /**
      * GrammarBuilder instance.
      *

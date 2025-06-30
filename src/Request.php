@@ -18,7 +18,7 @@ final readonly class Request
      *
      * @var InputBag
      */
-    private InputBag $request;
+    private InputBag $input;
 
     /**
      * ServerBag with SERVER parameters.
@@ -42,7 +42,7 @@ final readonly class Request
     ) {
         $this->query = new InputBag($get);
 
-        $this->request = new InputBag($post);
+        $this->input = new InputBag($post);
 
         $this->server = new ServerBag($server);
 
@@ -74,9 +74,9 @@ final readonly class Request
      *
      * @return InputBag
      */
-    public function request(): InputBag
+    public function input(): InputBag
     {
-        return $this->request;
+        return $this->input;
     }
 
     /**

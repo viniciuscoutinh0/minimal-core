@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Viniciuscoutinh0\Minimal\Database\Grammar;
 
+use Viniciuscoutinh0\Minimal\Concerns\When;
 use Viniciuscoutinh0\Minimal\Database\Grammar\Contracts\BuilderInterface;
 use Viniciuscoutinh0\Minimal\Database\Grammar\Contracts\SelectInterface;
 use Viniciuscoutinh0\Minimal\Database\Grammar\Contracts\TableInterface;
@@ -14,6 +15,8 @@ use Viniciuscoutinh0\Minimal\Database\Grammar\WhereClause;
 
 final class GrammarBuilder implements BuilderInterface, SelectInterface, TableInterface, WhereInterface
 {
+    use When;
+
     private string $table;
 
     private bool $withDistinct = false;

@@ -57,3 +57,11 @@ it('returns where clause bindings', function (): void {
 
     expect($query)->toBe(['%bar%']);
 });
+
+it('adds conditional to query', function (): void {
+    $query = $this->grammar->table('users')->when(true, function ($builder): void {
+        $builder->where('foo', 'bar');
+    });
+
+    expect($query->toSql())->toBe('select * from users where foo = ?');
+});
