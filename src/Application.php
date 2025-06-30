@@ -170,9 +170,9 @@ final class Application
      *
      * @return InputBag
      */
-    public function request(): InputBag
+    public function input(): InputBag
     {
-        return $this->request->request();
+        return $this->request->input();
     }
 
     /**
