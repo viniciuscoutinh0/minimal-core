@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace Viniciuscoutinh0\Minimal;
 
 use Illuminate\Support\Collection;
+use Viniciuscoutinh0\Minimal\Concerns\When;
 
 final class InputBag
 {
+    use When;
+
     public function __construct(private array $parameters = [])
     {
     }

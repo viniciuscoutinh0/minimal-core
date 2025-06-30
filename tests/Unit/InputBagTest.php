@@ -40,3 +40,19 @@ it('returns all query string keys', function (): void {
 
     expect($this->request->query()->keys())->toBe(['foo', 'baz']);
 });
+
+it('conditionally returns query string parameter', function (): void {
+    $this->request->query()->when(true, function ($request): void {
+        $request->set('foo', 'bar');
+    });
+
+    expect($this->request->query()->get('foo'))->toBe('bar');
+});
+
+it('unless conditionally returns query string parameter', function (): void {
+    $this->request->query()->when(false, function ($request): void {
+        $request->set('foo', 'bar');
+    });
+
+    expect($this->request->query()->get('foo'))->toBeNull();
+});
