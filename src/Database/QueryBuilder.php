@@ -6,6 +6,7 @@ namespace Viniciuscoutinh0\Minimal\Database;
 
 use PDO;
 use PDOStatement;
+use Viniciuscoutinh0\Minimal\Collection;
 use Viniciuscoutinh0\Minimal\Concerns\When;
 use Viniciuscoutinh0\Minimal\Database\Grammar\Enums\OperatorEnum;
 use Viniciuscoutinh0\Minimal\Database\Grammar\GrammarBuilder;
@@ -109,15 +110,17 @@ final class QueryBuilder
      * Get all records of the query.
      *
      * @param  string[]  ...$columns
-     * @return Model[]
+     * @return Collection
      */
-    public function get(...$columns): array
+    public function get(...$columns): Collection
     {
         if (count($columns)) {
             $this->grammar->select(...$columns);
         }
 
-        return $this->prepareStatement()->fetchAll(PDO::FETCH_CLASS, $this->baseClass);
+        $results = $this->prepareStatement()->fetchAll(PDO::FETCH_CLASS, $this->baseClass);
+
+        return new Collection($results);
     }
 
     /**
