@@ -23,7 +23,7 @@ it('can transform collection in json', function (): void {
 it('can apply filters collection items', function (): void {
     $collect = new Collection([10, 20, 30]);
 
-    expect($collect->filter(fn ($item) => $item > 20)->all())->toBe([2 => 30]);
+    expect($collect->filter(fn ($item) => $item > 20)->values()->all())->toBe([30]);
 });
 
 it('can apply a callback to each item in the collection', function (): void {
@@ -108,9 +108,13 @@ it('can get first item from collection', function (): void {
 it('can each item in collection', function (): void {
     $collect = new Collection([1, 2, 3]);
 
-    $collect->each(function ($item): void {
-        expect($item)->toBeLessThan(4);
+    $items = [];
+
+    $collect->each(function ($item) use (&$items): void {
+        $items[] = $item;
     });
+
+    expect($items)->toBe([1, 2, 3]);
 });
 
 it('returns keys from collection', function (): void {

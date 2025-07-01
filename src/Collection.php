@@ -59,7 +59,7 @@ final class Collection implements ArrayAccess, Countable, IteratorAggregate, Jso
         $filter = array_filter($this->items, $callback);
 
         return new self(
-            $preserveKeys ? array_values($filter) : $filter
+            $preserveKeys ? $filter : array_values($filter)
         );
     }
 
@@ -242,7 +242,7 @@ final class Collection implements ArrayAccess, Countable, IteratorAggregate, Jso
     }
 
     /**
-     * Get especific item from the collection.
+     * Get specific item from the collection.
      *
      * @param  mixed  $offset
      * @return mixed
