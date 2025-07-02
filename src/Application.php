@@ -81,10 +81,6 @@ final class Application
         $this->request ??= Request::make();
 
         $this->response ??= Response::make();
-
-        $this->vite ??= Vite::make(manifestPath: $basePath);
-
-        $this->cache ??= CacheFactory::create();
     }
 
     /**
@@ -277,6 +273,10 @@ final class Application
         $this->configureTimezone(env('APP_TIMEZONE', 'UTC'));
 
         date_default_timezone_set($this->timezone());
+
+        $this->vite ??= Vite::make(manifestPath: $this->basePath());
+
+        $this->cache ??= CacheFactory::create();
 
         $this->isBooted = true;
     }
