@@ -25,7 +25,7 @@ interface CacheInterface
      * @param  int  $ttl
      * @return mixed
      */
-    public function put(string $key, Closure $callback, int $ttl): mixed;
+    public function put(string $key, mixed $value, int $ttl): mixed;
 
     /**
      * Remember an item in the cache.
