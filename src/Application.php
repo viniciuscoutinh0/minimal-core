@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Viniciuscoutinh0\Minimal;
 
 use LogicException;
+use Viniciuscoutinh0\Minimal\Contracts\CacheInterface;
+use Viniciuscoutinh0\Minimal\Factory\CacheFactory;
 use Viniciuscoutinh0\Minimal\Providers\ServiceProvider;
 
 final class Application
@@ -45,6 +47,13 @@ final class Application
     private Vite $vite;
 
     /**
+     * Cache instance.
+     *
+     * @var CacheInterface
+     */
+    private CacheInterface $cache;
+
+    /**
      * Application locale.
      *
      * @var string|null
@@ -74,6 +83,8 @@ final class Application
         $this->response ??= Response::make();
 
         $this->vite ??= Vite::make(manifestPath: $basePath);
+
+        $this->cache ??= CacheFactory::create();
     }
 
     /**
@@ -236,6 +247,16 @@ final class Application
     public function vite(): Vite
     {
         return $this->vite;
+    }
+
+    /**
+     * Get the cache instance.
+     *
+     * @return CacheInterface
+     */
+    public function cache(): CacheInterface
+    {
+        return $this->cache;
     }
 
     /**
