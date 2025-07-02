@@ -28,6 +28,13 @@ interface DriverInterface
     public function password(): string;
 
     /**
+     * Get the database connection database name.
+     *
+     * @return string
+     */
+    public function database(): string;
+
+    /**
      * Get the database connection options.
      *
      * @return array

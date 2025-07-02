@@ -6,7 +6,7 @@ namespace Viniciuscoutinh0\Minimal\Database\Drivers;
 
 use Viniciuscoutinh0\Minimal\Database\Drivers\Contracts\DriverInterface;
 
-final readonly class MSSQLDriver implements DriverInterface
+final readonly class RedisDriver implements DriverInterface
 {
     public function __construct(
         private string $host,
@@ -65,6 +65,8 @@ final readonly class MSSQLDriver implements DriverInterface
      */
     public function dsn(): string
     {
-        return "sqlsrv:Server={$this->host},{$this->port};Database={$this->database}";
+        $auth = sprintf('%s:%s@', $this->username, $this->password);
+
+        return "redis://{$auth}{$this->host}:{$this->port}/{$this->database}";
     }
 }

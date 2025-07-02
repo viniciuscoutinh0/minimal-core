@@ -4,33 +4,20 @@ declare(strict_types=1);
 
 namespace Viniciuscoutinh0\Minimal\Database;
 
-use PDO;
 use RuntimeException;
+use Symfony\Component\Cache\Adapter\RedisAdapter;
 use Viniciuscoutinh0\Minimal\Database\Drivers\Contracts\DriverInterface;
 
-final class Connection
+final class RedisConnection
 {
-    /**
-     * Connection instance.
-     *
-     * @var Connection|null
-     */
-    private static ?Connection $instance = null;
+    private static ?RedisConnection $instance = null;
 
-    /**
-     * Pdo instance.
-     *
-     * @var PDO
-     */
-    private PDO $pdo;
+    private RedisAdapter $adapter;
 
-    private function __construct(DriverInterface $driver)
+    public function __construct(DriverInterface $driver)
     {
-        $this->pdo = new PDO(
-            dsn: $driver->dsn(),
-            username: $driver->username(),
-            password: $driver->password(),
-            options: $driver->options(),
+        $this->adapter = new RedisAdapter(
+            redis: RedisAdapter::createConnection($driver->dsn(), $driver->options())
         );
     }
 
@@ -38,7 +25,7 @@ final class Connection
      * Create a new connection instance.
      *
      * @param  DriverInterface  $driver
-     * @return Connection
+     * @return RedisConnection
      */
     public static function create(DriverInterface $driver): self
     {
@@ -52,7 +39,7 @@ final class Connection
     /**
      * Get the connection instance.
      *
-     * @return Connection
+     * @return RedisConnection
      */
     public static function instance(): self
     {
@@ -63,13 +50,8 @@ final class Connection
         return self::$instance;
     }
 
-    /**
-     * Get the PDO instance.
-     *
-     * @return PDO
-     */
-    public function pdo(): PDO
+    public function adapter(): RedisAdapter
     {
-        return $this->pdo;
+        return $this->adapter;
     }
 }
