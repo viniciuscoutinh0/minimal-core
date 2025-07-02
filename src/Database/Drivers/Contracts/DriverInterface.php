@@ -16,23 +16,23 @@ interface DriverInterface
     /**
      * Get the database connection username.
      *
-     * @return string
+     * @return string|null
      */
-    public function username(): string;
+    public function username(): ?string;
 
     /**
      * Get the database connection password.
      *
-     * @return string
+     * @return string|null
      */
-    public function password(): string;
+    public function password(): ?string;
 
     /**
      * Get the database connection database name.
      *
-     * @return string
+     * @return string|int
      */
-    public function database(): string;
+    public function database(): string|int;
 
     /**
      * Get the database connection options.

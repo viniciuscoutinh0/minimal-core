@@ -6,7 +6,6 @@ namespace Viniciuscoutinh0\Minimal\Factory;
 
 use RuntimeException;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
-use Symfony\Component\Cache\Adapter\RedisAdapter;
 use Viniciuscoutinh0\Minimal\Cache;
 use Viniciuscoutinh0\Minimal\Contracts\CacheInterface;
 use Viniciuscoutinh0\Minimal\Database\Drivers\RedisDriver;
@@ -24,8 +23,8 @@ final class CacheFactory
             'redis' => RedisConnection::create(
                 driver: new RedisDriver(
                     host: env('REDIS_HOST', '127.0.0.1'),
-                    port: env('REDIS_PORT', 6379),
-                    database: env('REDIS_DATABASE', '0'),
+                    port: (int) env('REDIS_PORT', 6379),
+                    database: env('REDIS_DATABASE', 0),
                     username: env('REDIS_USERNAME'),
                     password: env('REDIS_PASSWORD'),
                 )

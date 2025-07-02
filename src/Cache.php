@@ -31,15 +31,15 @@ final class Cache implements CacheInterface
      * Put an item in the cache.
      *
      * @param  string  $key
-     * @param  Closure  $callback
+     * @param  mixed  $value
      * @param  int  $ttl
      * @return mixed
      */
-    public function put(string $key, Closure $callback, int $ttl): mixed
+    public function put(string $key, mixed $value, int $ttl): mixed
     {
         $item = $this->adapter->getItem($key);
 
-        $item->set($callback());
+        $item->set($this->evaluate($value));
         $item->expiresAfter($ttl);
 
         $this->adapter->save($item);
@@ -105,5 +105,20 @@ final class Cache implements CacheInterface
     public function flush(): void
     {
         $this->adapter->clear();
+    }
+
+    /**
+     * Evaluate the given value.
+     *
+     * @param  mixed  $value
+     * @return mixed
+     */
+    private function evaluate(mixed $value): mixed
+    {
+        if (is_callable($value) || $value instanceof Closure) {
+            return $value();
+        }
+
+        return $value;
     }
 }

@@ -11,9 +11,9 @@ final readonly class RedisDriver implements DriverInterface
     public function __construct(
         private string $host,
         private int $port,
-        private string $database,
-        private string $username,
-        private string $password,
+        private string|int $database,
+        private ?string $username = null,
+        private ?string $password = null,
         private array $options = [],
     ) {
     }
@@ -21,9 +21,9 @@ final readonly class RedisDriver implements DriverInterface
     /**
      * Get the database connection username.
      *
-     * @return string
+     * @return string|null
      */
-    public function username(): string
+    public function username(): ?string
     {
         return $this->username;
     }
@@ -31,9 +31,9 @@ final readonly class RedisDriver implements DriverInterface
     /**
      * Get the database connection password.
      *
-     * @return string
+     * @return string|null
      */
-    public function password(): string
+    public function password(): ?string
     {
         return $this->password;
     }
@@ -65,8 +65,23 @@ final readonly class RedisDriver implements DriverInterface
      */
     public function dsn(): string
     {
-        $auth = sprintf('%s:%s@', $this->username, $this->password);
+        $dsn = 'redis://';
 
-        return "redis://{$auth}{$this->host}:{$this->port}/{$this->database}";
+        $auth = '';
+        if ($this->username !== null) {
+            $auth .= urlencode((string) $this->username);
+        }
+
+        if ($this->password !== null) {
+            $auth .= ':'.urlencode((string) $this->password);
+        }
+
+        if ($auth !== '') {
+            $dsn .= $auth.'@';
+        }
+
+        $dsn .= "{$this->host}:{$this->port}/{$this->database}";
+
+        return $dsn;
     }
 }
