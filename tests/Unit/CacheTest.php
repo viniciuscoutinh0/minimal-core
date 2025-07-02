@@ -50,3 +50,19 @@ it('can flush the cache', function (): void {
     expect($this->cache->get('foo'))->toBeNull();
     expect($this->cache->get('baz'))->toBeNull();
 });
+
+it('can add scalar value to cache', function (): void {
+    $this->cache->put('foo', 'bar', 1500);
+
+    expect($this->cache->get('foo'))->toBe('bar');
+});
+
+it('expires cache item', function (): void {
+    $this->cache->put('foo', 'bar', 1);
+
+    expect($this->cache->get('foo'))->toBe('bar');
+
+    sleep(2);
+
+    expect($this->cache->get('foo'))->toBeNull();
+});

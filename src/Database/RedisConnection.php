@@ -10,11 +10,21 @@ use Viniciuscoutinh0\Minimal\Database\Drivers\Contracts\DriverInterface;
 
 final class RedisConnection
 {
+    /**
+     * Instance
+     *
+     * @var RedisConnection
+     */
     private static ?RedisConnection $instance = null;
 
+    /**
+     * Redis adapter
+     *
+     * @var RedisAdapter
+     */
     private RedisAdapter $adapter;
 
-    public function __construct(DriverInterface $driver)
+    private function __construct(DriverInterface $driver)
     {
         $this->adapter = new RedisAdapter(
             redis: RedisAdapter::createConnection($driver->dsn(), $driver->options())
@@ -50,6 +60,11 @@ final class RedisConnection
         return self::$instance;
     }
 
+    /**
+     * Get the Redis adapter.
+     *
+     * @return RedisAdapter
+     */
     public function adapter(): RedisAdapter
     {
         return $this->adapter;
