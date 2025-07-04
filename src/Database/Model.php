@@ -7,9 +7,12 @@ namespace Viniciuscoutinh0\Minimal\Database;
 use Illuminate\Support\Collection;
 use JsonSerializable;
 use RuntimeException;
+use Viniciuscoutinh0\Minimal\Database\Concerns\HasCastAttribute;
 
 abstract class Model implements JsonSerializable
 {
+    use HasCastAttribute;
+
     /**
      * The table associated with the model.
      *
@@ -44,7 +47,15 @@ abstract class Model implements JsonSerializable
      */
     public function __get(string $key): mixed
     {
-        return $this->attributes[$key] ?? null;
+        if (! array_key_exists($key, $this->attributes)) {
+            return null;
+        }
+
+        if (array_key_exists($key, $this->casts)) {
+            return $this->castAttribute($key);
+        }
+
+        return $this->attributes[$key];
     }
 
     /**
