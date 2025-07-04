@@ -111,7 +111,14 @@ final class GrammarBuilder implements BuilderInterface, OrderByInterface, Select
         return $this;
     }
 
-    public function orderBy(string $column, OrderByDirectionEnum $direction = OrderByDirectionEnum::Asc): static
+    /**
+     * Order by column
+     *
+     * @param  string  $column
+     * @param  OrderByDirectionEnum  $direction
+     * @return static
+     */
+    public function orderBy(string $column, ?OrderByDirectionEnum $direction = null): static
     {
         $this->orderBy = $column;
         $this->orderByDirection = $direction;
@@ -119,9 +126,20 @@ final class GrammarBuilder implements BuilderInterface, OrderByInterface, Select
         return $this;
     }
 
+    /**
+     * Order by column desc
+     *
+     * @param  string  $column
+     * @return static
+     */
     public function orderByDesc(string $column): static
     {
         return $this->orderBy($column, OrderByDirectionEnum::Desc);
+    }
+
+    public function hasOrderBy(): bool
+    {
+        return $this->orderBy !== null;
     }
 
     /**
@@ -208,12 +226,23 @@ final class GrammarBuilder implements BuilderInterface, OrderByInterface, Select
         $sql .= ' where'.implode('', $conditions);
     }
 
+    /**
+     * Add the order by clause to the query.
+     *
+     * @param  string  $sql
+     * @return void
+     */
     private function addOrderBy(string &$sql): void
     {
         if (! $this->orderBy) {
             return;
         }
 
-        $sql .= " order by {$this->orderBy} {$this->orderByDirection->value}";
+        /** @var OrderByDirectionEnum $direction */
+        $direction = $this->orderByDirection instanceof OrderByDirectionEnum
+            ? $this->orderByDirection
+            : OrderByDirectionEnum::Asc;
+
+        $sql .= " order by {$this->orderBy} {$direction->value}";
     }
 }

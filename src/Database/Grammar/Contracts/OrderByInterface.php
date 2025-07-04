@@ -15,7 +15,7 @@ interface OrderByInterface
      * @param  OrderByDirectionEnum  $direction
      * @return static
      */
-    public function orderBy(string $column, OrderByDirectionEnum $direction = OrderByDirectionEnum::Asc): static;
+    public function orderBy(string $column, ?OrderByDirectionEnum $direction = null): static;
 
     /**
      * Order by column desc

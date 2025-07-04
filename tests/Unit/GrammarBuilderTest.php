@@ -79,7 +79,7 @@ it('can change direction order in query', function (): void {
     expect($query)->toBe('select * from users order by foo desc');
 });
 
-it('can add direct desc direction in order by', function () {
+it('can add direct desc direction in order by', function (): void {
     $query = $this->grammar->table('users')->orderByDesc('foo')->toSql();
 
     expect($query)->toBe('select * from users order by foo desc');
