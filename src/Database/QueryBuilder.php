@@ -97,7 +97,7 @@ final class QueryBuilder
      */
     public function first(...$columns): ?Model
     {
-        return $this->findOrderBy(OrderByDirectionEnum::Asc, $columns);
+        return $this->findOrderBy($columns, OrderByDirectionEnum::Asc);
     }
 
     /**
@@ -106,9 +106,9 @@ final class QueryBuilder
      * @param  string[]  ...$columns
      * @return ?Model
      */
-    public function lasted(...$columns): ?Model
+    public function last(...$columns): ?Model
     {
-        return $this->findOrderBy(OrderByDirectionEnum::Desc, $columns);
+        return $this->findOrderBy($columns, OrderByDirectionEnum::Desc);
     }
 
     /**
@@ -179,19 +179,22 @@ final class QueryBuilder
     }
 
     /**
-     * Find a record by its primary key.
+     * Find and order by a record.
      *
-     * @param  OrderByDirectionEnum  $direction
      * @param  string[]  $columns
+     * @param  ?OrderByDirectionEnum  $direction
      * @return ?Model
      */
-    private function findOrderBy(OrderByDirectionEnum $direction, array $columns = []): ?Model
+    private function findOrderBy(array $columns = [], ?OrderByDirectionEnum $direction = null): ?Model
     {
         if (count($columns)) {
             $this->grammar->select(...$columns);
         }
 
-        $this->grammar->orderBy($this->model->primaryKey(), $direction);
+        /** Check if the query has an order filled is not apply the primary key as default */
+        if (! $this->grammar->hasOrderBy()) {
+            $this->grammar->orderBy($this->model->primaryKey(), $direction);
+        }
 
         $statement = $this->prepareStatement();
 
