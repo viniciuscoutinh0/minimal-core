@@ -6,14 +6,16 @@ namespace Viniciuscoutinh0\Minimal\Database\Grammar;
 
 use Viniciuscoutinh0\Minimal\Concerns\When;
 use Viniciuscoutinh0\Minimal\Database\Grammar\Contracts\BuilderInterface;
+use Viniciuscoutinh0\Minimal\Database\Grammar\Contracts\OrderByInterface;
 use Viniciuscoutinh0\Minimal\Database\Grammar\Contracts\SelectInterface;
 use Viniciuscoutinh0\Minimal\Database\Grammar\Contracts\TableInterface;
 use Viniciuscoutinh0\Minimal\Database\Grammar\Contracts\WhereInterface;
 use Viniciuscoutinh0\Minimal\Database\Grammar\Enums\BooleanEnum;
 use Viniciuscoutinh0\Minimal\Database\Grammar\Enums\OperatorEnum;
+use Viniciuscoutinh0\Minimal\Database\Grammar\Enums\OrderByDirectionEnum;
 use Viniciuscoutinh0\Minimal\Database\Grammar\WhereClause;
 
-final class GrammarBuilder implements BuilderInterface, SelectInterface, TableInterface, WhereInterface
+final class GrammarBuilder implements BuilderInterface, OrderByInterface, SelectInterface, TableInterface, WhereInterface
 {
     use When;
 
@@ -26,6 +28,10 @@ final class GrammarBuilder implements BuilderInterface, SelectInterface, TableIn
 
     /** @var WhereClause[] */
     private array $wheres = [];
+
+    private ?string $orderBy = null;
+
+    private ?OrderByDirectionEnum $orderByDirection = null;
 
     /**
      * Set the table name
@@ -105,6 +111,19 @@ final class GrammarBuilder implements BuilderInterface, SelectInterface, TableIn
         return $this;
     }
 
+    public function orderBy(string $column, OrderByDirectionEnum $direction = OrderByDirectionEnum::Asc): static
+    {
+        $this->orderBy = $column;
+        $this->orderByDirection = $direction;
+
+        return $this;
+    }
+
+    public function orderByDesc(string $column): static
+    {
+        return $this->orderBy($column, OrderByDirectionEnum::Desc);
+    }
+
     /**
      * Get the SQL representation of the query.
      *
@@ -120,6 +139,8 @@ final class GrammarBuilder implements BuilderInterface, SelectInterface, TableIn
         $sql .= " from {$this->table}";
 
         $this->addWhereClause($sql);
+
+        $this->addOrderBy($sql);
 
         return $sql;
     }
@@ -185,5 +206,14 @@ final class GrammarBuilder implements BuilderInterface, SelectInterface, TableIn
         }
 
         $sql .= ' where'.implode('', $conditions);
+    }
+
+    private function addOrderBy(string &$sql): void
+    {
+        if (! $this->orderBy) {
+            return;
+        }
+
+        $sql .= " order by {$this->orderBy} {$this->orderByDirection->value}";
     }
 }

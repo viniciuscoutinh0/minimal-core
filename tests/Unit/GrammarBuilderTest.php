@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Viniciuscoutinh0\Minimal\Database\Grammar\Enums\OperatorEnum;
+use Viniciuscoutinh0\Minimal\Database\Grammar\Enums\OrderByDirectionEnum;
 use Viniciuscoutinh0\Minimal\Database\Grammar\GrammarBuilder;
 
 /** @property GrammarBuilder $grammar */
@@ -64,4 +65,22 @@ it('adds conditional to query', function (): void {
     });
 
     expect($query->toSql())->toBe('select * from users where foo = ?');
+});
+
+it('can add order by in query', function (): void {
+    $query = $this->grammar->table('users')->orderBy('foo')->toSql();
+
+    expect($query)->toBe('select * from users order by foo asc');
+});
+
+it('can change direction order in query', function (): void {
+    $query = $this->grammar->table('users')->orderBy('foo', OrderByDirectionEnum::Desc)->toSql();
+
+    expect($query)->toBe('select * from users order by foo desc');
+});
+
+it('can add direct desc direction in order by', function () {
+    $query = $this->grammar->table('users')->orderByDesc('foo')->toSql();
+
+    expect($query)->toBe('select * from users order by foo desc');
 });
