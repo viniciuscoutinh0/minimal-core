@@ -47,11 +47,15 @@ abstract class Model implements JsonSerializable
      */
     public function __get(string $key): mixed
     {
+        if (! array_key_exists($key, $this->attributes)) {
+            return null;
+        }
+
         if (array_key_exists($key, $this->casts)) {
             return $this->castAttribute($key);
         }
 
-        return $this->attributes[$key] ?? null;
+        return $this->attributes[$key];
     }
 
     /**

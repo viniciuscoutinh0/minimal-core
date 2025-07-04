@@ -34,7 +34,7 @@ trait HasCastAttribute
      */
     protected function castAttribute(string $key): mixed
     {
-        if (! array_key_exists($key, $this->casts) || ! array_key_exists($key, $this->attributes)) {
+        if (! array_key_exists($key, $this->casts)) {
             return $this->attributes[$key] ?? null;
         }
 
@@ -59,7 +59,6 @@ trait HasCastAttribute
             'json' => is_string($value) ? json_decode($value, true) : $value,
             'datetime' =>  $value instanceof Carbon ? $value : Carbon::createFromFormat('Y-m-d H:i:s', $value),
             'date' => $value instanceof Carbon ? $value : Carbon::createFromFormat('Y-m-d', $value),
-            'enum' => $value instanceof BackedEnum ? $value : BackedEnum::tryFrom($value),
             default => $value,
         };
     }
