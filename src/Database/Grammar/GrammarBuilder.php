@@ -135,7 +135,7 @@ final class GrammarBuilder implements BuilderInterface, OrderByInterface, Select
      */
     public function orderByDesc(string $column): static
     {
-        return $this->orderBy($column, OrderByDirectionEnum::Desc);
+        $this->orderBy($column, OrderByDirectionEnum::Desc);
 
         return $this;
     }
