@@ -24,4 +24,25 @@ interface OrderByInterface
      * @return static
      */
     public function orderByDesc(string $column): static;
+
+    /**
+     * Check if has order by
+     *
+     * @return bool
+     */
+    public function hasOrderBy(): bool;
+
+    /**
+     * Get order by column
+     *
+     * @return ?string
+     */
+    public function getOrderByColumn(): ?string;
+
+    /**
+     * Get order by direction
+     *
+     * @return ?OrderByDirectionEnum
+     */
+    public function getOrderByDirection(): ?OrderByDirectionEnum;
 }
