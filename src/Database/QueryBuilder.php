@@ -84,7 +84,7 @@ final class QueryBuilder
      * @param  OrderByDirectionEnum|null  $direction
      * @return static
      */
-    public function orderBy(string $column, OrderByDirectionEnum $direction = OrderByDirectionEnum::Asc): self
+    public function orderBy(string $column, ?OrderByDirectionEnum $direction = null): self
     {
         $this->grammar->orderBy($column, $direction);
 
