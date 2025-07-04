@@ -191,7 +191,7 @@ final class QueryBuilder
             $this->grammar->select(...$columns);
         }
 
-        /** Check if the query has an order filled is not apply the primary key as default */
+        /** Check if the query has an order specified is not apply the primary key as default */
         if (! $this->grammar->hasOrderBy()) {
             $this->grammar->orderBy($this->model->primaryKey(), $direction);
         }

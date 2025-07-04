@@ -12,7 +12,7 @@ interface OrderByInterface
      * Order by column
      *
      * @param  string  $column
-     * @param  OrderByDirectionEnum  $direction
+     * @param  OrderByDirectionEnum|null  $direction
      * @return static
      */
     public function orderBy(string $column, ?OrderByDirectionEnum $direction = null): static;
