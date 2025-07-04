@@ -8,7 +8,9 @@ use PDO;
 use PDOStatement;
 use Viniciuscoutinh0\Minimal\Collection;
 use Viniciuscoutinh0\Minimal\Concerns\When;
+use Viniciuscoutinh0\Minimal\Database\Exceptions\InvalidQueryException;
 use Viniciuscoutinh0\Minimal\Database\Grammar\Enums\OperatorEnum;
+use Viniciuscoutinh0\Minimal\Database\Grammar\Enums\OrderByDirectionEnum;
 use Viniciuscoutinh0\Minimal\Database\Grammar\GrammarBuilder;
 
 final class QueryBuilder
@@ -75,6 +77,18 @@ final class QueryBuilder
         return $this;
     }
 
+    public function orderBy(string $column, OrderByDirectionEnum $direction = OrderByDirectionEnum::Asc): self
+    {
+        $this->grammar->orderBy($column, $direction);
+
+        return $this;
+    }
+
+    public function orderByDesc(string $column): self
+    {
+        return $this->orderBy($column, OrderByDirectionEnum::Desc);
+    }
+
     /**
      * Get the first record of the query.
      *
@@ -83,13 +97,18 @@ final class QueryBuilder
      */
     public function first(...$columns): ?Model
     {
-        if (count($columns)) {
-            $this->grammar->select(...$columns);
-        }
+        return $this->findOrderBy(OrderByDirectionEnum::Asc, $columns);
+    }
 
-        $statement = $this->prepareStatement();
-
-        return $statement->fetchObject($this->baseClass) ?? null;
+    /**
+     * Get the last record of the query.
+     *
+     * @param  string[]  ...$columns
+     * @return ?Model
+     */
+    public function lasted(...$columns): ?Model
+    {
+        return $this->findOrderBy(OrderByDirectionEnum::Desc, $columns);
     }
 
     /**
@@ -146,8 +165,36 @@ final class QueryBuilder
             PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL,
         ]);
 
-        $statement->execute($this->grammar->bindings());
+        $bindings = $this->grammar->bindings();
+
+        if ($statement->execute($bindings) === false) {
+            throw new InvalidQueryException(
+                sql: $this->grammar->toSql(),
+                bindings: $bindings,
+                message: $pdo->errorInfo()[2] ?? 'Unknown SQL error',
+            );
+        }
 
         return $statement;
+    }
+
+    /**
+     * Find a record by its primary key.
+     *
+     * @param  OrderByDirectionEnum  $direction
+     * @param  string[]  $columns
+     * @return ?Model
+     */
+    private function findOrderBy(OrderByDirectionEnum $direction, array $columns = []): ?Model
+    {
+        if (count($columns)) {
+            $this->grammar->select(...$columns);
+        }
+
+        $this->grammar->orderBy($this->model->primaryKey(), $direction);
+
+        $statement = $this->prepareStatement();
+
+        return $statement->fetchObject($this->baseClass) ?? null;
     }
 }

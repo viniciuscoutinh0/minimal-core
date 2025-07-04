@@ -26,6 +26,9 @@
             "email": "vinicius@promofarma.com.br"
         }
     ],
+    "scripts": {
+        "pest": "./vendor/bin/pest"
+    },
     "minimum-stability": "stable",
     "config": {
         "allow-plugins": {
