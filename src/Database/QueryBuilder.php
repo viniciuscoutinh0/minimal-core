@@ -77,6 +77,13 @@ final class QueryBuilder
         return $this;
     }
 
+    /**
+     * Order by column
+     *
+     * @param  string  $column
+     * @param  OrderByDirectionEnum|null  $direction
+     * @return static
+     */
     public function orderBy(string $column, OrderByDirectionEnum $direction = OrderByDirectionEnum::Asc): self
     {
         $this->grammar->orderBy($column, $direction);
@@ -84,6 +91,12 @@ final class QueryBuilder
         return $this;
     }
 
+    /**
+     * Order by column desc
+     *
+     * @param  string  $column
+     * @return static
+     */
     public function orderByDesc(string $column): self
     {
         return $this->orderBy($column, OrderByDirectionEnum::Desc);
@@ -191,10 +204,15 @@ final class QueryBuilder
             $this->grammar->select(...$columns);
         }
 
-        /** Check if the query has an order specified is not apply the primary key as default */
-        if (! $this->grammar->hasOrderBy()) {
-            $this->grammar->orderBy($this->model->primaryKey(), $direction);
-        }
+        /**
+         * If an ORDER BY clause is defined, use its column; otherwise, fallback to the table's primary key.
+         */
+        $this->grammar->orderBy(
+            $this->grammar->hasOrderBy()
+                ? $this->grammar->getOrderByColumn()
+                : $this->model->primaryKey(),
+            $direction
+        );
 
         $statement = $this->prepareStatement();
 

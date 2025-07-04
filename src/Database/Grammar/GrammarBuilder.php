@@ -121,6 +121,7 @@ final class GrammarBuilder implements BuilderInterface, OrderByInterface, Select
     public function orderBy(string $column, ?OrderByDirectionEnum $direction = null): static
     {
         $this->orderBy = $column;
+
         $this->orderByDirection = $direction;
 
         return $this;
@@ -135,11 +136,38 @@ final class GrammarBuilder implements BuilderInterface, OrderByInterface, Select
     public function orderByDesc(string $column): static
     {
         return $this->orderBy($column, OrderByDirectionEnum::Desc);
+
+        return $this;
     }
 
+    /**
+     * Check if has order by
+     *
+     * @return bool
+     */
     public function hasOrderBy(): bool
     {
         return $this->orderBy !== null;
+    }
+
+    /**
+     * Get order by column
+     *
+     * @return ?string
+     */
+    public function getOrderByColumn(): ?string
+    {
+        return $this->orderBy;
+    }
+
+    /**
+     * Get order by direction
+     *
+     * @return ?OrderByDirectionEnum
+     */
+    public function getOrderByDirection(): ?OrderByDirectionEnum
+    {
+        return $this->orderByDirection;
     }
 
     /**
@@ -234,12 +262,12 @@ final class GrammarBuilder implements BuilderInterface, OrderByInterface, Select
      */
     private function addOrderBy(string &$sql): void
     {
-        if (! $this->orderBy) {
+        if (! $this->hasOrderBy()) {
             return;
         }
 
-        $direction = $this->orderByDirection ?? OrderByDirectionEnum::Asc;
+        $direction = $this->getOrderByDirection() ?? OrderByDirectionEnum::Asc;
 
-        $sql .= " order by {$this->orderBy} {$direction->value}";
+        $sql .= " order by {$this->getOrderByColumn()} {$direction->value}";
     }
 }
