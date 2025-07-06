@@ -6,7 +6,7 @@ namespace Viniciuscoutinh0\Minimal\Database\Drivers;
 
 use Viniciuscoutinh0\Minimal\Database\Drivers\Contracts\DriverInterface;
 
-final readonly class MSSQLDriver implements DriverInterface
+final readonly class MySqlDriver implements DriverInterface
 {
     public function __construct(
         private string $host,
@@ -64,6 +64,6 @@ final readonly class MSSQLDriver implements DriverInterface
      */
     public function dsn(): string
     {
-        return "sqlsrv:Server={$this->host},{$this->port};Database={$this->database}";
+        return "mysql:host={$this->host};port={$this->port};dbname={$this->database}";
     }
 }

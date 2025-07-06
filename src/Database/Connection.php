@@ -30,7 +30,7 @@ final class Connection
             dsn: $driver->dsn(),
             username: $driver->username(),
             password: $driver->password(),
-            options: $driver->options(),
+            options: array_merge($this->defaultAttributes(), $driver->options()),
         );
     }
 
@@ -71,5 +71,20 @@ final class Connection
     public function pdo(): PDO
     {
         return $this->pdo;
+    }
+
+    /**
+     * Get the default PDO attributes.
+     * 
+     * @return array
+     */
+    private function defaultAttributes(): array
+    {
+        return [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
+            PDO::ATTR_CASE => PDO::CASE_NATURAL,
+            PDO::ATTR_STRINGIFY_FETCHES => false,
+        ];
     }
 }

@@ -34,10 +34,6 @@ trait HasCastAttribute
      */
     protected function castAttribute(string $key): mixed
     {
-        if (! array_key_exists($key, $this->casts)) {
-            return $this->attributes[$key] ?? null;
-        }
-
         $value = $this->attributes[$key];
 
         if ($value === null) {
@@ -47,7 +43,7 @@ trait HasCastAttribute
         $type = $this->casts[$key];
 
         if (enum_exists($type) && is_subclass_of($type, BackedEnum::class)) {
-            return $type::tryFrom($value);
+            return $type::from($value);
         }
 
         return match ($type) {
