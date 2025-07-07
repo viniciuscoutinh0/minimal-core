@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace Viniciuscoutinh0\Minimal\Database;
 
-use Illuminate\Support\Collection;
 use JsonSerializable;
 use RuntimeException;
+use Viniciuscoutinh0\Minimal\Collection;
 use Viniciuscoutinh0\Minimal\Database\Concerns\HasCastAttribute;
+use Viniciuscoutinh0\Minimal\Database\Concerns\HasRelation;
 
 abstract class Model implements JsonSerializable
 {
     use HasCastAttribute;
+    use HasRelation;
 
     /**
      * The table associated with the model.
@@ -164,7 +166,7 @@ abstract class Model implements JsonSerializable
      */
     final public function toCollection(): Collection
     {
-        return collect($this->toArray());
+        return new Collection($this->toArray());
     }
 
     /**
