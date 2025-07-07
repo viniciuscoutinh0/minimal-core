@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Viniciuscoutinh0\Minimal\Database;
 
+use Exception;
 use PDO;
 use PDOStatement;
 use Viniciuscoutinh0\Minimal\Collection;
@@ -26,7 +27,7 @@ final class QueryBuilder
 
     /**
      * Relations to be eager loaded.
-     * 
+     *
      * @var string[]
      */
     private array $with = [];
@@ -43,7 +44,7 @@ final class QueryBuilder
 
     /**
      * Add relations to the query.
-     * 
+     *
      * @param  string[]  ...$relations
      * @return self
      */
@@ -234,6 +235,8 @@ final class QueryBuilder
 
         $statement = $this->prepareStatement();
 
-        return $statement->fetchObject($this->baseClass) ?? null;
+        $result = $statement->fetchObject($this->baseClass);
+
+        return $result ? $result : null;
     }
 }

@@ -15,14 +15,15 @@ final readonly class MSSQLDriver implements DriverInterface
         private string $username,
         private string $password,
         private array $options = [],
-    ) {}
+    ) {
+    }
 
     /**
      * Get the database connection username.
      *
-     * @return string
+     * @return string|null
      */
-    public function username(): string
+    public function username(): ?string
     {
         return $this->username;
     }
@@ -30,9 +31,9 @@ final readonly class MSSQLDriver implements DriverInterface
     /**
      * Get the database connection password.
      *
-     * @return string
+     * @return string|null
      */
-    public function password(): string
+    public function password(): ?string
     {
         return $this->password;
     }
@@ -50,9 +51,9 @@ final readonly class MSSQLDriver implements DriverInterface
     /**
      * Get the database connection database name.
      *
-     * @return string
+     * @return string|int
      */
-    public function database(): string
+    public function database(): string|int
     {
         return $this->database;
     }

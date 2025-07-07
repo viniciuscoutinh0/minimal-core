@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Viniciuscoutinh0\Minimal\Factory;
 
+use PDO;
 use RuntimeException;
 use Viniciuscoutinh0\Minimal\Database\Connection;
 use Viniciuscoutinh0\Minimal\Database\Drivers\MSSQLDriver;
@@ -12,10 +15,10 @@ final readonly class DatabaseConnectionFactory
 {
     /**
      *  Create a new database connection instance.
-     * 
-     * @return Connection|null
+     *
+     * @return Connection
      */
-    public static function create(): Connection|null
+    public static function create(): Connection
     {
         $connection = env('DB_CONNECTION', 'sqlite');
 
@@ -30,9 +33,6 @@ final readonly class DatabaseConnectionFactory
                 database: env('DB_DATABASE', 'minimal_framework'),
                 username: env('DB_USERNAME', 'root'),
                 password: env('DB_PASSWORD', ''),
-                options: [
-                    \PDO::SQLSRV_ATTR_DIRECT_QUERY => false,
-                ]
             )),
 
             'sqlsrv' => Connection::create(new MSSQLDriver(
@@ -40,11 +40,13 @@ final readonly class DatabaseConnectionFactory
                 port: (int) env('DB_PORT', 1433),
                 database: env('DB_DATABASE', 'minimal_framework'),
                 username: env('DB_USERNAME', 'sa'),
-                password: env('DB_PASSWORD', '123456'),
-                options: []
+                password: env('DB_PASSWORD', ''),
+                options: [
+                    PDO::SQLSRV_ATTR_DIRECT_QUERY => false,
+                ]
             )),
 
-            default => throw new RuntimeException("Database driver [$connection] not supported."),
+            default => throw new RuntimeException("Database driver [{$connection}] not supported."),
         };
     }
 }

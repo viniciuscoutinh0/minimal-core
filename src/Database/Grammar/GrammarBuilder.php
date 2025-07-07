@@ -19,18 +19,46 @@ final class GrammarBuilder implements BuilderInterface, OrderByInterface, Select
 {
     use When;
 
+    /**
+     * Table name
+     *
+     * @var string
+     */
     private string $table;
 
+    /**
+     * With distinct keyword
+     *
+     * @var bool
+     */
     private bool $withDistinct = false;
 
-    /** @var string[] */
+    /**
+     * Selected columns
+     *
+     * @var string[]
+     */
     private array $columns = [];
 
-    /** @var WhereClause[] */
+    /**
+     * Where clauses
+     *
+     * @var WhereClause[]
+     */
     private array $wheres = [];
 
+    /**
+     * Order by column
+     *
+     * @var ?string
+     */
     private ?string $orderBy = null;
 
+    /**
+     * Order by direction
+     *
+     * @var ?OrderByDirectionEnum
+     */
     private ?OrderByDirectionEnum $orderByDirection = null;
 
     /**
