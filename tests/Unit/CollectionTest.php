@@ -128,3 +128,9 @@ it('can reduce collection', function (): void {
 
     expect($collect->reduce(fn ($carry, $item) => $carry + $item))->toBe(6);
 });
+
+it('can unique values from collection', function (): void {
+    $collect = new Collection([1, 2, 3, 3, 4]);
+
+    expect($collect->unique()->all())->toBe([1, 2, 3, 4]);
+});

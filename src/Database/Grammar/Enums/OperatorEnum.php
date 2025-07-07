@@ -21,4 +21,8 @@ enum OperatorEnum: string
     case Like = 'like';
 
     case NotLike = 'not like';
+
+    case In = 'in';
+
+    case NotIn = 'not in';
 }

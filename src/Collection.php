@@ -11,9 +11,12 @@ use Countable;
 use IteratorAggregate;
 use JsonSerializable;
 use Traversable;
+use Viniciuscoutinh0\Minimal\Concerns\StaticConstruct;
 
 final class Collection implements ArrayAccess, Countable, IteratorAggregate, JsonSerializable
 {
+    use StaticConstruct;
+
     public function __construct(
         protected array $items = []
     ) {
@@ -121,6 +124,28 @@ final class Collection implements ArrayAccess, Countable, IteratorAggregate, Jso
     }
 
     /**
+     * Get all of the keys in the collection.
+     *
+     * @return static
+     */
+    public function unique(?Closure $callback = null): static
+    {
+        $seen = [];
+        $result = [];
+
+        foreach ($this->items as $item) {
+            $key = $callback ? $callback($item) : $item;
+
+            if (! in_array($key, $seen, true)) {
+                $seen[] = $key;
+                $result[] = $item;
+            }
+        }
+
+        return new self($result);
+    }
+
+    /**
      * Collapse the collection of items into a single array.
      *
      * @return static
@@ -160,6 +185,16 @@ final class Collection implements ArrayAccess, Countable, IteratorAggregate, Jso
     public function isNotEmpty(): bool
     {
         return ! $this->isEmpty();
+    }
+
+    /**
+     * Get the first item in the collection.
+     *
+     * @return mixed
+     */
+    public function first(): mixed
+    {
+        return $this->items[0] ?? null;
     }
 
     /**

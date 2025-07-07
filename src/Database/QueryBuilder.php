@@ -13,6 +13,8 @@ use Viniciuscoutinh0\Minimal\Database\Exceptions\InvalidQueryException;
 use Viniciuscoutinh0\Minimal\Database\Grammar\Enums\OperatorEnum;
 use Viniciuscoutinh0\Minimal\Database\Grammar\Enums\OrderByDirectionEnum;
 use Viniciuscoutinh0\Minimal\Database\Grammar\GrammarBuilder;
+use Viniciuscoutinh0\Minimal\Database\Relations\HasMany;
+use Viniciuscoutinh0\Minimal\Database\Relations\HasOne;
 
 final class QueryBuilder
 {
@@ -99,6 +101,62 @@ final class QueryBuilder
     }
 
     /**
+     * Add a where in clause to the query.
+     *
+     * @param  string  $column
+     * @param  array  $values
+     * @return self
+     */
+    public function whereIn(string $column, array $values): self
+    {
+        $this->grammar->whereIn($column, $values);
+
+        return $this;
+    }
+
+    /**
+     * Add a where not in clause to the query.
+     *
+     * @param  string  $column
+     * @param  array  $values
+     * @return self
+     */
+    public function whereNotIn(string $column, array $values): self
+    {
+        $this->grammar->whereNotIn($column, $values);
+
+        return $this;
+    }
+
+    /**
+     * Add a or where in clause to the query.
+     *
+     * @param  string  $column
+     * @param  array  $values
+     * @return self
+     */
+    public function orWhereIn(string $column, array $values): self
+    {
+        $this->grammar->orWhereIn($column, $values);
+
+        return $this;
+    }
+
+    /**
+     * Add a or where not in clause to the query.
+     *
+     * @param  string  $column
+     * @param  array  $values
+     * @return self
+     */
+    public function orWhereNotIn(string $column, array $values): self
+    {
+        $this->grammar->orWhereNotIn($column, $values);
+
+        return $this;
+    }
+
+    /**
      * Order by column
      *
      * @param  string  $column
@@ -131,10 +189,6 @@ final class QueryBuilder
      */
     public function first(...$columns): ?Model
     {
-        if ($relations = $this->with) {
-            $this->eagerRelationships($relations);
-        }
-
         return $this->findOrderBy($columns, OrderByDirectionEnum::Asc);
     }
 
@@ -175,9 +229,20 @@ final class QueryBuilder
             $this->grammar->select(...$columns);
         }
 
-        $results = $this->prepareStatement()->fetchAll(PDO::FETCH_CLASS, $this->baseClass);
+        $statement = $this->prepareStatement()->fetchAll(PDO::FETCH_CLASS, $this->baseClass);
 
-        return new Collection($results);
+        $results = Collection::make($statement);
+
+        if ($this->with) {
+            $this->eagerRelationships($results);
+        }
+
+        return $results;
+    }
+
+    public function toSql(): string
+    {
+        return $this->grammar->toSql();
     }
 
     /**
@@ -201,7 +266,7 @@ final class QueryBuilder
 
         $statement = $pdo->prepare($this->grammar->toSql());
 
-        $bindings = $this->grammar->bindings();
+        $bindings = $this->resolveBindings($this->grammar->bindings());
 
         if ($statement->execute($bindings) === false) {
             throw new InvalidQueryException(
@@ -244,8 +309,106 @@ final class QueryBuilder
         return $result ? $result : null;
     }
 
-    private function eagerRelationships($relations): void
+    /**
+     * Resolve the bindings.
+     *
+     * @param  array  $bindings
+     * @return array
+     */
+    private function resolveBindings(array $bindings): array
     {
-        //
+        return array_merge(...array_map(
+            fn (mixed $value): array => is_array($value) ? $value : [$value],
+            $bindings
+        ));
+    }
+
+    private function eagerRelationships(Collection $models): void
+    {
+        foreach ($this->with as $relationName) {
+            $first = $models->first();
+            $relation = $first->{$relationName}();
+
+            match (true) {
+                $relation instanceof HasOne => $this->eagerHasOne(
+                    $models, $relationName, $relation
+                ),
+
+                $relation instanceof HasMany => $this->eagerHasMany(
+                    $models, $relationName, $relation
+                ),
+
+                default => null,
+            };
+        }
+    }
+
+    /**
+     * Eager load a HasOne relationship.
+     *
+     * @param  Collection<Model>  $models
+     * @param  string  $relationName
+     * @param  HasOne  $relation
+     * @return void
+     */
+    private function eagerHasOne(Collection $models, string $relationName, HasOne $relation): void
+    {
+        $localKey = $relation->localKey();
+        $foreign = $relation->foreignKey();
+        $related = $relation->related();
+
+        $keys = $models
+            ->map(fn (Model $model) => $model->{$localKey})
+            ->unique()
+            ->toArray();
+
+        /** @var Collection<Model> $results */
+        $results = (new $related)::newQuery()->whereIn($foreign, $keys)->get();
+
+        $dictionary = [];
+
+        foreach ($results as $relatedModel) {
+            $dictionary[$relatedModel->{$foreign}] = $relatedModel;
+        }
+
+        foreach ($models as $model) {
+            $key = $model->{$localKey};
+            $model->{$relationName} = $dictionary[$key] ?? null;
+        }
+    }
+
+    /**
+     * Eager load a HasMany relationship.
+     *
+     * @param  Collection<Model>  $models
+     * @param  string  $relationName
+     * @param  HasMany  $relation
+     * @return void
+     */
+    private function eagerHasMany(Collection $models, string $relationName, HasMany $relation): void
+    {
+        $localKey = $relation->localKey();
+        $foreign = $relation->foreignKey();
+        $related = $relation->related();
+
+        $keys = $models
+            ->map(fn (Model $model) => $model->{$localKey})
+            ->unique()
+            ->values()
+            ->toArray();
+
+        /** @var Collection $results */
+        $results = (new $related)::newQuery()->whereIn($foreign, $keys)->get();
+
+        $grouped = [];
+
+        foreach ($results as $result) {
+            $grouped[$result->{$foreign}][] = $result;
+        }
+
+        foreach ($models as $model) {
+            $key = $model->{$localKey};
+            $model->{$relationName} = Collection::make($grouped[$key] ?? []);
+        }
     }
 }

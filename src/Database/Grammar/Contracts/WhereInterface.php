@@ -27,4 +27,40 @@ interface WhereInterface extends BuilderInterface
      * @return self
      */
     public function orWhere(string $column, mixed $value, OperatorEnum $operator = OperatorEnum::Equal): self;
+
+    /**
+     * Add a where in clause to the query.
+     *
+     * @param  string  $column
+     * @param  array  $values
+     * @return self
+     */
+    public function whereIn(string $column, array $values): self;
+
+    /**
+     * Add a where not in clause to the query.
+     *
+     * @param  string  $column
+     * @param  array  $values
+     * @return self
+     */
+    public function whereNotIn(string $column, array $values): self;
+
+    /**
+     * Add a or where in clause to the query.
+     *
+     * @param  string  $column
+     * @param  array  $values
+     * @return self
+     */
+    public function orWhereIn(string $column, array $values): self;
+
+    /**
+     * Add a or where not in clause to the query.
+     *
+     * @param  string  $column
+     * @param  array  $values
+     * @return self
+     */
+    public function orWhereNotIn(string $column, array $values): self;
 }
