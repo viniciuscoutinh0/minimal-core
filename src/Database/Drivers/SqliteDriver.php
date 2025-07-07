@@ -7,11 +7,7 @@ use Viniciuscoutinh0\Minimal\Database\Drivers\Contracts\DriverInterface;
 final readonly class SqliteDriver implements DriverInterface
 {
     public function __construct(
-        private ?string $host = null,
-        private ?int $port = null,
         private string $database,
-        private ?string $username = null,
-        private ?string $password = null,
         private array $options = [],
     ) {}
 

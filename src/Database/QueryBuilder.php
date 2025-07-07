@@ -24,6 +24,13 @@ final class QueryBuilder
      */
     private GrammarBuilder $grammar;
 
+    /**
+     * Relations to be eager loaded.
+     * 
+     * @var string[]
+     */
+    private array $with = [];
+
     public function __construct(
         private readonly Model $model,
         private readonly string $baseClass,
@@ -32,6 +39,19 @@ final class QueryBuilder
         $this->grammar = new GrammarBuilder;
 
         $this->grammar->table($this->model->table());
+    }
+
+    /**
+     * Add relations to the query.
+     * 
+     * @param  string[]  ...$relations
+     * @return self
+     */
+    public function with(...$relations): self
+    {
+        $this->with = array_merge($this->with, $relations);
+
+        return $this;
     }
 
     /**
@@ -174,9 +194,7 @@ final class QueryBuilder
     {
         $pdo = $this->pdo;
 
-        $statement = $pdo->prepare($this->grammar->toSql(), [
-            PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL,
-        ]);
+        $statement = $pdo->prepare($this->grammar->toSql());
 
         $bindings = $this->grammar->bindings();
 
