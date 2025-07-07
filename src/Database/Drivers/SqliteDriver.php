@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Viniciuscoutinh0\Minimal\Database\Drivers;
 
 use Viniciuscoutinh0\Minimal\Database\Drivers\Contracts\DriverInterface;
@@ -9,7 +11,8 @@ final readonly class SqliteDriver implements DriverInterface
     public function __construct(
         private string $database,
         private array $options = [],
-    ) {}
+    ) {
+    }
 
     /**
      * Get the database connection DSN string.

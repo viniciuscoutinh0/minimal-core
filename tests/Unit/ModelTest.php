@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Carbon\Carbon;
 use Viniciuscoutinh0\Minimal\Collection;
 use Viniciuscoutinh0\Minimal\Database\Model;
@@ -10,11 +12,11 @@ beforeAll(function (): void {
 
     $pdo = $connection->pdo();
 
-    $pdo->exec(<<<SQL
+    $pdo->exec(<<<'SQL'
         CREATE TABLE IF NOT EXISTS users (
-            id          INTEGER PRIMARY KEY AUTOINCREMENT, 
-            name        VARCHAR(255), 
-            email       VARCHAR(255), 
+            id          INTEGER PRIMARY KEY AUTOINCREMENT,
+            name        VARCHAR(255),
+            email       VARCHAR(255),
             password    VARCHAR(255),
             data        VARCHAR(255) default '{"key": "value"}',
             status      INT DEFAULT 1,
@@ -23,8 +25,7 @@ beforeAll(function (): void {
 
     SQL);
 
-
-    $pdo->exec(<<<SQL
+    $pdo->exec(<<<'SQL'
         INSERT INTO users (name, email, password)
         VALUES ('John Doe', 'V2i0F@example.com', 'password')
     SQL);
@@ -96,4 +97,10 @@ it('can find record by id', function (): void {
     expect($user->name)->toBe('John Doe');
     expect($user->email)->toBe('V2i0F@example.com');
     expect($user->password)->toBe('password');
+});
+
+it('returns null when record does not exist', function (): void {
+    $user = $this->user::newQuery()->find(2);
+
+    expect($user)->toBeNull();
 });

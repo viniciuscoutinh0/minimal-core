@@ -30,7 +30,7 @@ final class Connection
             dsn: $driver->dsn(),
             username: $driver->username(),
             password: $driver->password(),
-            options: array_merge($this->defaultAttributes(), $driver->options()),
+            options: array_merge($driver->options(), $this->defaultAttributes()),
         );
     }
 
@@ -75,7 +75,7 @@ final class Connection
 
     /**
      * Get the default PDO attributes.
-     * 
+     *
      * @return array
      */
     private function defaultAttributes(): array
