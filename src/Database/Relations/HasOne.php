@@ -9,14 +9,16 @@ use Viniciuscoutinh0\Minimal\Database\Model;
 final class HasOne extends Relation
 {
     /**
-     * Get the results of the relation
+     * Get the result of the relation
      *
      * @return Model|null
      */
-    public function results(): ?Model
+    public function results(): Model|null
     {
-        $query = $this->queryBuilder()->where($this->foreignKey, $this->parent->{$this->localKey});
+        if ($this->cache !== null) {
+            return $this->cache;
+        }
 
-        return $query->first();
+        return $this->cache = $this->where()->first();
     }
 }

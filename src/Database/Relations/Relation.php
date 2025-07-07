@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Viniciuscoutinh0\Minimal\Database\Relations;
 
+use Viniciuscoutinh0\Minimal\Collection;
 use Viniciuscoutinh0\Minimal\Database\Model;
 use Viniciuscoutinh0\Minimal\Database\QueryBuilder;
 
@@ -15,6 +16,13 @@ use Viniciuscoutinh0\Minimal\Database\QueryBuilder;
  */
 abstract class Relation
 {
+    /**
+     * The results of the relation
+     *
+     * @var Model|Collection|null
+     */
+    protected Model|Collection|null $cache = null;
+
     public function __construct(
         protected Model $parent,
         protected string $related,
@@ -26,21 +34,34 @@ abstract class Relation
     /**
      * Get the results of the relation
      *
-     * @return Model|Collection<Model>
+     * @return Model|Collection<Model>|null
      */
-    abstract public function results(): mixed;
+    abstract public function results(): Model|Collection|null;
 
     /**
      * Query builder
      *
      * @return QueryBuilder
      */
-    protected function queryBuilder(): QueryBuilder
+    protected function builder(): QueryBuilder
     {
         return new QueryBuilder(
             model: new $this->related,
             baseClass: $this->related,
             pdo: $this->parent->connection()->pdo(),
+        );
+    }
+
+    /**
+     * Base where clause
+     *
+     * @return QueryBuilder
+     */
+    protected function where(): QueryBuilder
+    {
+        return $this->builder()->where(
+            $this->foreignKey,
+            $this->parent->{$this->localKey},
         );
     }
 }

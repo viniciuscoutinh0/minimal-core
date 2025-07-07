@@ -8,11 +8,49 @@ use Exception;
 
 final class InvalidQueryException extends Exception
 {
+    /**
+     * SQL query
+     *
+     * @var string
+     */
+    protected string $sql;
+
+    /**
+     * Bindings for the query
+     *
+     * @var array
+     */
+    protected array $bindings = [];
+
     public function __construct(
-        public string $sql,
-        public array $bindings,
-        public string $message,
+         string $sql,
+         array $bindings,
+         string $message,
     ) {
+        $this->sql = $sql;
+
+        $this->bindings = $bindings;
+
         parent::__construct($message);
+    }
+
+    /**
+     * Get the SQL query
+     *
+     * @return string
+     */
+    public function sql(): string
+    {
+        return $this->sql;
+    }
+
+    /**
+     * Get the bindings for the query
+     *
+     * @return array
+     */
+    public function bindings(): array
+    {
+        return $this->bindings;
     }
 }
