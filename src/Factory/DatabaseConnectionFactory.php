@@ -17,7 +17,7 @@ final readonly class DatabaseConnectionFactory
      */
     public static function create(): Connection|null
     {
-        $connection = env('DB_CONNECTION', 'sqlsrv');
+        $connection = env('DB_CONNECTION', 'sqlite');
 
         return match ($connection) {
             'sqlite' => Connection::create(new SqliteDriver(
@@ -30,7 +30,9 @@ final readonly class DatabaseConnectionFactory
                 database: env('DB_DATABASE', 'minimal_framework'),
                 username: env('DB_USERNAME', 'root'),
                 password: env('DB_PASSWORD', ''),
-                options: []
+                options: [
+                    \PDO::SQLSRV_ATTR_DIRECT_QUERY => false,
+                ]
             )),
 
             'sqlsrv' => Connection::create(new MSSQLDriver(
