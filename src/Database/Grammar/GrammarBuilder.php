@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Viniciuscoutinh0\Minimal\Database\Grammar;
 
+use InvalidArgumentException;
 use Viniciuscoutinh0\Minimal\Concerns\When;
 use Viniciuscoutinh0\Minimal\Database\Grammar\Contracts\BuilderInterface;
 use Viniciuscoutinh0\Minimal\Database\Grammar\Contracts\OrderByInterface;
@@ -133,6 +134,84 @@ final class GrammarBuilder implements BuilderInterface, OrderByInterface, Select
             column: $column,
             operator: $operator,
             value: $value,
+            boolean: BooleanEnum::Or
+        );
+
+        return $this;
+    }
+
+    public function whereIn(string $column, array $values): WhereInterface
+    {
+        if (empty($values)) {
+            throw new InvalidArgumentException('Values cannot be empty');
+        }
+
+        $this->wheres[] = new WhereClause(
+            column: $column,
+            operator: OperatorEnum::In,
+            value: $values,
+            boolean: BooleanEnum::And
+        );
+
+        return $this;
+    }
+
+    public function whereNotIn(string $column, array $values): WhereInterface
+    {
+        if (empty($values)) {
+            throw new InvalidArgumentException('Values cannot be empty');
+        }
+
+        $this->wheres[] = new WhereClause(
+            column: $column,
+            operator: OperatorEnum::NotIn,
+            value: $values,
+            boolean: BooleanEnum::And
+        );
+
+        return $this;
+    }
+
+    /**
+     * Add a or where in clause to the query.
+     *
+     * @param  string  $column
+     * @param  array  $values
+     * @return self
+     */
+    public function orWhereIn(string $column, array $values): WhereInterface
+    {
+        if (empty($values)) {
+            throw new InvalidArgumentException('Values cannot be empty');
+        }
+
+        $this->wheres[] = new WhereClause(
+            column: $column,
+            operator: OperatorEnum::In,
+            value: $values,
+            boolean: BooleanEnum::Or
+        );
+
+        return $this;
+    }
+
+    /**
+     * Add a or where not in clause to the query.
+     *
+     * @param  string  $column
+     * @param  array  $values
+     * @return self
+     */
+    public function orWhereNotIn(string $column, array $values): WhereInterface
+    {
+        if (empty($values)) {
+            throw new InvalidArgumentException('Values cannot be empty');
+        }
+
+        $this->wheres[] = new WhereClause(
+            column: $column,
+            operator: OperatorEnum::NotIn,
+            value: $values,
             boolean: BooleanEnum::Or
         );
 
@@ -274,9 +353,14 @@ final class GrammarBuilder implements BuilderInterface, OrderByInterface, Select
 
         /** @var WhereClause $whereClause */
         foreach ($this->wheres as $index => $whereClause) {
+            $placeholder = match ($whereClause->operator) {
+                OperatorEnum::In, OperatorEnum::NotIn => '('.implode(', ', array_fill(0, count($whereClause->value), '?')).')',
+                default => '?'
+            };
+
             $prefix = $index === 0 ? '' : " {$whereClause->boolean->value}";
 
-            $conditions[] = "{$prefix} {$whereClause->column} {$whereClause->operator->value} ?";
+            $conditions[] = "{$prefix} {$whereClause->column} {$whereClause->operator->value} {$placeholder}";
         }
 
         $sql .= ' where'.implode('', $conditions);

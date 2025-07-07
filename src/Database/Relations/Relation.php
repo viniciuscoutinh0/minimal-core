@@ -39,6 +39,36 @@ abstract class Relation
     abstract public function results(): Model|Collection|null;
 
     /**
+     * Get the name of the related model
+     *
+     * @return string
+     */
+    final public function related(): string
+    {
+        return $this->related;
+    }
+
+    /**
+     * Get the name of the foreign key
+     *
+     * @return string
+     */
+    final public function foreignKey(): string
+    {
+        return $this->foreignKey;
+    }
+
+    /**
+     * Get the name of the local key
+     *
+     * @return string
+     */
+    final public function localKey(): string
+    {
+        return $this->localKey;
+    }
+
+    /**
      * Query builder
      *
      * @return QueryBuilder

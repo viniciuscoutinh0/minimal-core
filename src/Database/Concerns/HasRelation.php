@@ -10,6 +10,13 @@ use Viniciuscoutinh0\Minimal\Database\Relations\HasOne;
 trait HasRelation
 {
     /**
+     * The relations of the model
+     *
+     * @var array
+     */
+    protected array $relations = [];
+
+    /**
      * Has one relation
      *
      * @param string $related
@@ -22,8 +29,8 @@ trait HasRelation
         return new HasOne(
             parent: $this,
             related: $related,
-            foreignKey: $foreignKey ?: $this->getForeignKey(),
-            localKey: $localKey ?: $this->getPrimaryKey()
+            foreignKey: $foreignKey,
+            localKey: $localKey ?: $this->primaryKey()
         );
     }
 
@@ -40,8 +47,41 @@ trait HasRelation
         return new HasMany(
             parent: $this,
             related: $related,
-            foreignKey: $foreignKey ?: $this->getForeignKey(),
-            localKey: $localKey ?: $this->getPrimaryKey()
+            foreignKey: $foreignKey,
+            localKey: $localKey ?: $this->primaryKey()
         );
+    }
+
+    /**
+     * Add a relation to the model
+     *
+     * @param string $name
+     * @param mixed $value
+     * @return void
+     */
+    public function relation(string $name, mixed $value): void
+    {
+        $this->relations[$name] = $value;
+    }
+
+    /**
+     * Check if the model has a relation
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function hasRelation(string $name): bool
+    {
+        return array_key_exists($name, $this->relations);
+    }
+
+    /**
+     * Get the relations of the model
+     *
+     * @return array
+     */
+    public function relations(): array
+    {
+        return $this->relations;
     }
 }

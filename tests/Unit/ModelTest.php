@@ -103,3 +103,27 @@ it('returns null when record does not exist', function (): void {
 
     expect($user)->toBeNull();
 });
+
+it('returns only existing records when using whereIn', function (): void {
+    $users = $this->user::newQuery()->whereIn('id', [1, 2])->get();
+
+    expect($users->count())->toBe(1);
+});
+
+it('returns only existing records when using whereNotIn', function (): void {
+    $users = $this->user::newQuery()->whereNotIn('id', [1])->get();
+
+    expect($users->count())->toBe(0);
+});
+
+it('can combine where and whereNotIn clauses', function (): void {
+    $users = $this->user::newQuery()->where('id', 1)->whereNotIn('id', [2, 3])->get();
+
+    expect($users->count())->toBe(1);
+});
+
+it('can combine where and orWhereIn clauses', function (): void {
+    $users = $this->user::newQuery()->where('id', 1)->orWhereIn('id', [2, 3])->get();
+
+    expect($users->count())->toBe(1);
+});

@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Viniciuscoutinh0\Minimal\Database;
 
 use JsonSerializable;
+use ReflectionMethod;
 use RuntimeException;
 use Viniciuscoutinh0\Minimal\Collection;
 use Viniciuscoutinh0\Minimal\Database\Concerns\HasCastAttribute;
 use Viniciuscoutinh0\Minimal\Database\Concerns\HasRelation;
+use Viniciuscoutinh0\Minimal\Database\Relations\Relation;
 
 abstract class Model implements JsonSerializable
 {
@@ -49,6 +51,21 @@ abstract class Model implements JsonSerializable
      */
     public function __get(string $key): mixed
     {
+        if (isset($this->relations[$key])) {
+            return $this->relations[$key];
+        }
+
+        if (method_exists($this, $key)) {
+            $reflection = new ReflectionMethod($this, $key);
+            if ($reflection->getNumberOfRequiredParameters() === 0) {
+                $relation = $this->{$key}();
+
+                if ($relation instanceof Relation) {
+                    return $this->relations[$key] = $relation->results();
+                }
+            }
+        }
+
         if (! array_key_exists($key, $this->attributes)) {
             return null;
         }
@@ -69,6 +86,12 @@ abstract class Model implements JsonSerializable
      */
     public function __set(string $key, mixed $value): void
     {
+        if (method_exists($this, $key) && ($value instanceof Relation) === false) {
+            $this->relations[$key] = $value;
+
+            return;
+        }
+
         $this->attributes[$key] = $value;
     }
 
@@ -156,7 +179,7 @@ abstract class Model implements JsonSerializable
      */
     final public function toArray(): array
     {
-        return $this->attributes;
+        return array_merge($this->attributes, $this->relations);
     }
 
     /**
