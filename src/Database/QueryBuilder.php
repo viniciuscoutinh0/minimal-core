@@ -198,7 +198,7 @@ final class QueryBuilder
     private function prepareStatement(): PDOStatement
     {
         $pdo = $this->pdo;
-        dump($this->grammar->toSql());
+
         $statement = $pdo->prepare($this->grammar->toSql());
 
         $bindings = $this->grammar->bindings();
@@ -246,6 +246,6 @@ final class QueryBuilder
 
     private function eagerRelationships($relations): void
     {
-        dd($relations);
+        //
     }
 }

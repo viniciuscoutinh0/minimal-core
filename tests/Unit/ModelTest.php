@@ -7,10 +7,6 @@ use Viniciuscoutinh0\Minimal\Collection;
 use Viniciuscoutinh0\Minimal\Database\Model;
 use Viniciuscoutinh0\Minimal\Factory\DatabaseConnectionFactory;
 
-/**
- * @property Model $user
- * @property Model $posts
- */
 beforeAll(function (): void {
     $connection = DatabaseConnectionFactory::create();
 
@@ -26,23 +22,11 @@ beforeAll(function (): void {
             status      INT DEFAULT 1,
             created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
-
-        CREATE TABLE IF NOT EXISTS posts (
-            id          INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id     INTEGER,
-            title       VARCHAR(255),
-            content     TEXT,
-            created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );
-
     SQL);
 
     $pdo->exec(<<<'SQL'
         INSERT INTO users (name, email, password)
         VALUES ('John Doe', 'V2i0F@example.com', 'password');
-
-        INSERT INTO posts (user_id, title, content)
-        VALUES (1, 'My First Post', 'This is my first post.');
     SQL);
 });
 
@@ -55,10 +39,6 @@ afterAll(function (): void {
 });
 
 beforeEach(function (): void {
-    $this->posts = new class extends Model {
-        protected string $table = 'posts';
-    };
-
     $this->user = new class extends Model {
         protected string $table = 'users';
 

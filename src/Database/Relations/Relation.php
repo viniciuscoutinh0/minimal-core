@@ -26,7 +26,7 @@ abstract class Relation
     /**
      * Get the results of the relation
      *
-     * @return mixed
+     * @return Model|Collection<Model>
      */
     abstract public function results(): mixed;
 
