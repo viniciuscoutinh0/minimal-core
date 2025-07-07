@@ -131,6 +131,10 @@ final class QueryBuilder
      */
     public function first(...$columns): ?Model
     {
+        if ($relations = $this->with) {
+            $this->eagerRelationships($relations);
+        }
+
         return $this->findOrderBy($columns, OrderByDirectionEnum::Asc);
     }
 
@@ -238,5 +242,10 @@ final class QueryBuilder
         $result = $statement->fetchObject($this->baseClass);
 
         return $result ? $result : null;
+    }
+
+    private function eagerRelationships($relations): void
+    {
+        //
     }
 }

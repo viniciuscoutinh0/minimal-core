@@ -21,13 +21,12 @@ beforeAll(function (): void {
             data        VARCHAR(255) default '{"key": "value"}',
             status      INT DEFAULT 1,
             created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-
+        );
     SQL);
 
     $pdo->exec(<<<'SQL'
         INSERT INTO users (name, email, password)
-        VALUES ('John Doe', 'V2i0F@example.com', 'password')
+        VALUES ('John Doe', 'V2i0F@example.com', 'password');
     SQL);
 });
 
