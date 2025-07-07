@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Viniciuscoutinh0\Minimal\Database\Relations;
 
 use Viniciuscoutinh0\Minimal\Collection;
+use Viniciuscoutinh0\Minimal\Database\Model;
 
 final class HasMany extends Relation
 {
@@ -15,8 +16,10 @@ final class HasMany extends Relation
      */
     public function results(): Collection
     {
-        $query = $this->queryBuilder()->where($this->foreignKey, $this->parent->{$this->localKey});
+        if ($this->cache !== null) {
+            return $this->cache;
+        }
 
-        return $query->get();
+        return $this->cache = $this->where()->get();
     }
 }

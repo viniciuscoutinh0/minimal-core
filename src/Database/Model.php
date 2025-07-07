@@ -89,7 +89,7 @@ abstract class Model implements JsonSerializable
      */
     final public static function newQuery(): QueryBuilder
     {
-        return (new static)->query();
+        return (new static)->builder();
     }
 
     /**
@@ -120,7 +120,7 @@ abstract class Model implements JsonSerializable
      *
      * @return QueryBuilder
      */
-    final public function query(): QueryBuilder
+    final public function builder(): QueryBuilder
     {
         return new QueryBuilder(
             model: $this,
