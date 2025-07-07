@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Viniciuscoutinh0\Minimal\Database\Grammar;
 
+use InvalidArgumentException;
 use Viniciuscoutinh0\Minimal\Concerns\When;
 use Viniciuscoutinh0\Minimal\Database\Grammar\Contracts\BuilderInterface;
 use Viniciuscoutinh0\Minimal\Database\Grammar\Contracts\OrderByInterface;
@@ -141,6 +142,10 @@ final class GrammarBuilder implements BuilderInterface, OrderByInterface, Select
 
     public function whereIn(string $column, array $values): WhereInterface
     {
+        if (empty($values)) {
+            throw new InvalidArgumentException('Values cannot be empty');
+        }
+
         $this->wheres[] = new WhereClause(
             column: $column,
             operator: OperatorEnum::In,
@@ -153,6 +158,10 @@ final class GrammarBuilder implements BuilderInterface, OrderByInterface, Select
 
     public function whereNotIn(string $column, array $values): WhereInterface
     {
+        if (empty($values)) {
+            throw new InvalidArgumentException('Values cannot be empty');
+        }
+
         $this->wheres[] = new WhereClause(
             column: $column,
             operator: OperatorEnum::NotIn,
@@ -172,6 +181,10 @@ final class GrammarBuilder implements BuilderInterface, OrderByInterface, Select
      */
     public function orWhereIn(string $column, array $values): WhereInterface
     {
+        if (empty($values)) {
+            throw new InvalidArgumentException('Values cannot be empty');
+        }
+
         $this->wheres[] = new WhereClause(
             column: $column,
             operator: OperatorEnum::In,
@@ -191,6 +204,10 @@ final class GrammarBuilder implements BuilderInterface, OrderByInterface, Select
      */
     public function orWhereNotIn(string $column, array $values): WhereInterface
     {
+        if (empty($values)) {
+            throw new InvalidArgumentException('Values cannot be empty');
+        }
+
         $this->wheres[] = new WhereClause(
             column: $column,
             operator: OperatorEnum::NotIn,

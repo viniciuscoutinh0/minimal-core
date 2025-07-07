@@ -326,6 +326,10 @@ final class QueryBuilder
     private function eagerRelationships(Collection $models): void
     {
         foreach ($this->with as $relationName) {
+            if ($models->isEmpty()) {
+                continue;
+            }
+
             $first = $models->first();
             $relation = $first->{$relationName}();
 
