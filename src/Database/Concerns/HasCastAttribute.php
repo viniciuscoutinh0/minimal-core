@@ -54,7 +54,7 @@ trait HasCastAttribute
             'array' => is_string($value) ? json_decode($value, true) : (array) $value,
             'json' => is_string($value) ? json_decode($value, true) : $value,
             'datetime' =>  $value instanceof Carbon ? $value : Carbon::createFromFormat('Y-m-d H:i:s', $this->normalizeDateTimeString($value)),
-            'date' => $value instanceof Carbon ? $value : Carbon::createFromFormat('Y-m-d', $value),
+            'date' => $value instanceof Carbon ? $value : Carbon::createFromFormat('Y-m-d', $this->normalizeDateTimeString($value)),
             default => $value,
         };
     }
