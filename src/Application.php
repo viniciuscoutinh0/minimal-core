@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Viniciuscoutinh0\Minimal;
 
+use Carbon\Carbon;
+use InvalidArgumentException;
 use LogicException;
 use Viniciuscoutinh0\Minimal\Contracts\CacheInterface;
 use Viniciuscoutinh0\Minimal\Factory\CacheFactory;
@@ -122,10 +124,17 @@ final class Application
      * Configure the application locale.
      *
      * @return self
+     * @throws InvalidArgumentException
      */
     public function configureLocale(string $locale): self
     {
+        if (! in_array($locale, Carbon::getAvailableLocales(), true)) {
+            throw new InvalidArgumentException('Locale is not available');
+        }
+
         $this->locale = $locale;
+
+        Carbon::setLocale($locale);
 
         return $this;
     }
@@ -148,6 +157,8 @@ final class Application
     public function configureTimezone(string $timezone): self
     {
         $this->timezone = $timezone;
+
+        date_default_timezone_set($timezone);
 
         return $this;
     }
@@ -268,11 +279,9 @@ final class Application
 
         $this->bootProviders();
 
-        $this->configureLocale(env('APP_LOCALE', 'en'));
-
         $this->configureTimezone(env('APP_TIMEZONE', 'UTC'));
 
-        date_default_timezone_set($this->timezone());
+        $this->configureLocale(env('APP_LOCALE', 'en'));
 
         $this->vite ??= Vite::make(manifestPath: $this->basePath());
 

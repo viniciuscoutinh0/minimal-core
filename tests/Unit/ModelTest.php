@@ -20,6 +20,7 @@ beforeAll(function (): void {
             password    VARCHAR(255),
             data        VARCHAR(255) default '{"key": "value"}',
             status      INT DEFAULT 1,
+            readed_at   VARCHAR(255) DEFAULT '2024-03-20 21:52:04.770',
             created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
     SQL);
@@ -45,6 +46,7 @@ beforeEach(function (): void {
         protected array $casts = [
             'data' => 'array',
             'created_at' => 'datetime',
+            'readed_at' => 'datetime',
             'status' => 'int',
         ];
     };
@@ -126,4 +128,10 @@ it('can combine where and orWhereIn clauses', function (): void {
     $users = $this->user::newQuery()->where('id', 1)->orWhereIn('id', [2, 3])->get();
 
     expect($users->count())->toBe(1);
+});
+
+it('can parse datetime with milliseconds', function (): void {
+    $user = $this->user::newQuery()->find(1);
+
+    expect($user->readed_at)->toBeInstanceOf(Carbon::class);
 });
