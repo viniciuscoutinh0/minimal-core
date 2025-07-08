@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Viniciuscoutinh0\Minimal;
 
+use Carbon\Carbon;
 use LogicException;
 use Viniciuscoutinh0\Minimal\Contracts\CacheInterface;
 use Viniciuscoutinh0\Minimal\Factory\CacheFactory;
@@ -127,6 +128,8 @@ final class Application
     {
         $this->locale = $locale;
 
+        Carbon::setLocale($locale);
+
         return $this;
     }
 
@@ -148,6 +151,8 @@ final class Application
     public function configureTimezone(string $timezone): self
     {
         $this->timezone = $timezone;
+
+        date_default_timezone_set($timezone);
 
         return $this;
     }
@@ -268,11 +273,9 @@ final class Application
 
         $this->bootProviders();
 
-        $this->configureLocale(env('APP_LOCALE', 'en'));
-
         $this->configureTimezone(env('APP_TIMEZONE', 'UTC'));
 
-        date_default_timezone_set($this->timezone());
+        $this->configureLocale(env('APP_LOCALE', 'en'));
 
         $this->vite ??= Vite::make(manifestPath: $this->basePath());
 
