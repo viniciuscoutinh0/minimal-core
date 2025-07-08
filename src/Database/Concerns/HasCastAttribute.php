@@ -53,9 +53,20 @@ trait HasCastAttribute
             'string' => (string) $value,
             'array' => is_string($value) ? json_decode($value, true) : (array) $value,
             'json' => is_string($value) ? json_decode($value, true) : $value,
-            'datetime' =>  $value instanceof Carbon ? $value : Carbon::parse($value),
+            'datetime' =>  $value instanceof Carbon ? $value : Carbon::createFromFormat('Y-m-d H:i:s', $this->normalizeDateTimeString($value)),
             'date' => $value instanceof Carbon ? $value : Carbon::createFromFormat('Y-m-d', $value),
             default => $value,
         };
+    }
+
+    /**
+     * Normalize a date time string.
+     *
+     * @param  string  $dateTimeString
+     * @return string
+     */
+    private function normalizeDateTimeString(string $dateTimeString): string
+    {
+        return preg_replace('/\.\d+/', '', $dateTimeString);
     }
 }

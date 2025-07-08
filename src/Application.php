@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Viniciuscoutinh0\Minimal;
 
 use Carbon\Carbon;
+use InvalidArgumentException;
 use LogicException;
 use Viniciuscoutinh0\Minimal\Contracts\CacheInterface;
 use Viniciuscoutinh0\Minimal\Factory\CacheFactory;
@@ -123,9 +124,14 @@ final class Application
      * Configure the application locale.
      *
      * @return self
+     * @throws InvalidArgumentException
      */
     public function configureLocale(string $locale): self
     {
+        if (! in_array($locale, Carbon::getAvailableLocales(), true)) {
+            throw new InvalidArgumentException('Locale is not available');
+        }
+
         $this->locale = $locale;
 
         Carbon::setLocale($locale);
