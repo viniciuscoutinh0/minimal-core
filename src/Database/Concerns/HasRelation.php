@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Viniciuscoutinh0\Minimal\Database\Concerns;
 
+use Viniciuscoutinh0\Minimal\Database\Relations\BelongsTo;
 use Viniciuscoutinh0\Minimal\Database\Relations\HasMany;
 use Viniciuscoutinh0\Minimal\Database\Relations\HasOne;
 
@@ -49,6 +50,24 @@ trait HasRelation
             related: $related,
             foreignKey: $foreignKey,
             localKey: $localKey ?: $this->primaryKey()
+        );
+    }
+
+    /**
+     * Belongs to relation
+     *
+     * @param string $related
+     * @param string|null $foreignKey
+     * @param string|null $localKey
+     * @return BelongsTo
+     */
+    public function belongsTo(string $related, ?string $foreignKey = null, ?string $localKey = null): BelongsTo
+    {
+        return new BelongsTo(
+            parent: $this,
+            related: $related,
+            foreignKey: $foreignKey,
+            localKey: $localKey
         );
     }
 
