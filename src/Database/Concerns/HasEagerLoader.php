@@ -39,14 +39,14 @@ trait HasEagerLoader
      */
     private function eagerRelationships(Collection $models): void
     {
-        foreach ($this->with as $relationName) {
-            if ($models->isEmpty()) {
-                continue;
-            }
+        if ($models->isEmpty()) {
+            return;
+        }
 
+        foreach ($this->with as $relationName) {
             if ($first = $models->first()) {
                 $relation = $first->{$relationName}();
-                $this->eagerOneToOne($models, $relationName, $relation);
+                $this->eagerLoadRelation($models, $relationName, $relation);
             }
         }
     }
@@ -59,7 +59,7 @@ trait HasEagerLoader
      * @param  Relation  $relation
      * @return void
      */
-    private function eagerOneToOne(Collection $models, string $relationName, Relation $relation): void
+    private function eagerLoadRelation(Collection $models, string $relationName, Relation $relation): void
     {
         $localKey = $relation->is(BelongsTo::class)
             ? $relation->foreignKey()

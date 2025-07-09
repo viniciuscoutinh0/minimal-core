@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Viniciuscoutinh0\Minimal\Database\Relations;
 
-use Viniciuscoutinh0\Minimal\Collection;
 use Viniciuscoutinh0\Minimal\Database\Model;
 
 final class BelongsTo extends Relation
@@ -12,16 +11,16 @@ final class BelongsTo extends Relation
     /**
      * Get the results of the relation
      *
-     * @return Model|Collection<Model>|null
+     * @return Model|null
      */
-    public function results(): Model|Collection|null
+    public function results(): Model|null
     {
         if ($this->cache !== null) {
             return $this->cache;
         }
 
         return $this->cache = $this->builder()
-            ->where($this->localKey, $this->parent->{$this->foreignKey})
+            ->where($this->foreignKey, $this->parent->{$this->localKey})
             ->first();
     }
 }
