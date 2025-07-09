@@ -67,7 +67,7 @@ trait HasRelation
             parent: $this,
             related: $related,
             foreignKey: $foreignKey,
-            localKey: $localKey
+            localKey: $localKey ?: $this->primaryKey()
         );
     }
 
