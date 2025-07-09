@@ -69,6 +69,26 @@ abstract class Relation
     }
 
     /**
+     * Check if the relation is an instance of the given class
+     *
+     * @return bool
+     */
+    final public function is(string $class): bool
+    {
+        return get_class($this) === $class;
+    }
+
+    /**
+     * Check if the relation is multiple
+     *
+     * @return bool
+     */
+    final public function isMultiple(): bool
+    {
+        return $this instanceof HasMany;
+    }
+
+    /**
      * Query builder
      *
      * @return QueryBuilder
