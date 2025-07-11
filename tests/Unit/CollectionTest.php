@@ -134,3 +134,30 @@ it('can unique values from collection', function (): void {
 
     expect($collect->unique()->all())->toEqual([1, 2, 3, 4]);
 });
+
+it('can sum array values', function (): void {
+    $collect = Collection::make([1, 2, 3]);
+
+    $collectB = Collection::make([4, 5, 6])->push(7)->map(fn ($i): int => $i * 2);
+
+    expect($collect->sum())->toBe(6);
+    expect($collectB->sum())->toBe(44);
+});
+
+it('can sum array values with callback', function (): void {
+    $collect = Collection::make([1, 2, 3]);
+
+    expect($collect->sum(fn ($i): int => $i * 2))->toBe(12);
+});
+
+it('can avg array values', function (): void {
+    $collect = Collection::make([1, 2, 3]);
+
+    expect($collect->avg())->toBe(2);
+});
+
+it('can average array values with callback', function (): void {
+    $collect = Collection::make([1, 2, 3]);
+
+    expect($collect->avg(fn ($i): int => $i * 2))->toBe(4);
+});

@@ -85,7 +85,7 @@ abstract class Relation
      */
     final public function isMultiple(): bool
     {
-        return $this instanceof HasMany;
+        return $this->is(class: HasMany::class);
     }
 
     /**

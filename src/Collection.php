@@ -168,6 +168,35 @@ final class Collection implements ArrayAccess, Countable, IteratorAggregate, Jso
     }
 
     /**
+     * Get the sum of the items in the collection.
+     *
+     * @param  Closure|null  $callback
+     * @return float|int
+     */
+    public function sum(?Closure $callback = null): float|int
+    {
+        if ($callback) {
+            return $this->map($callback)->sum();
+        }
+
+        return array_sum($this->items);
+    }
+
+    /**
+     * Get the average of the items in the collection.
+     *
+     * @return int|float|null
+     */
+    public function avg(?Closure $callback = null): int|float|null
+    {
+        $items = $callback ? $this->map($callback) : $this;
+
+        $count = $items->count();
+
+        return $count === 0 ? null : ($items->sum() / $count);
+    }
+
+    /**
      * Check if the collection is empty.
      *
      * @return bool
