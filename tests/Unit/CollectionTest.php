@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use PHPUnit\Runner\DeprecationCollector\Collector;
 use Viniciuscoutinh0\Minimal\Collection;
 
 it('returns all collection items', function (): void {

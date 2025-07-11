@@ -10,7 +10,6 @@ use Closure;
 use Countable;
 use IteratorAggregate;
 use JsonSerializable;
-use function PHPUnit\Framework\callback;
 use Traversable;
 use Viniciuscoutinh0\Minimal\Concerns\StaticConstruct;
 
@@ -172,7 +171,7 @@ final class Collection implements ArrayAccess, Countable, IteratorAggregate, Jso
      * Get the sum of the items in the collection.
      *
      * @param  Closure|null  $callback
-     * @return float
+     * @return float|int
      */
     public function sum(?Closure $callback = null): float|int
     {
