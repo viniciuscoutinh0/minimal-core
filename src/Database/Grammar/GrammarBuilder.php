@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Viniciuscoutinh0\Minimal\Database\Grammar;
 
+use DateTimeInterface;
 use InvalidArgumentException;
 use Viniciuscoutinh0\Minimal\Concerns\When;
 use Viniciuscoutinh0\Minimal\Database\Grammar\Contracts\BuilderInterface;
@@ -219,6 +220,108 @@ final class GrammarBuilder implements BuilderInterface, OrderByInterface, Select
     }
 
     /**
+     * Add a where between clause to the query.
+     *
+     * @param  string  $column
+     * @param  array  $values
+     * @return self
+     */
+    public function whereBetween(string $column, array $values): self
+    {
+        $this->wheres[] = new WhereClause(
+            column: $column,
+            operator: OperatorEnum::Between,
+            value: $values,
+            boolean: BooleanEnum::And
+        );
+
+        return $this;
+    }
+
+    /**
+     * Add a or where between clause to the query.
+     *
+     * @param  string  $column
+     * @param  array  $values
+     * @return self
+     */
+    public function orWhereBetween(string $column, array $values): self
+    {
+        $this->wheres[] = new WhereClause(
+            column: $column,
+            operator: OperatorEnum::Between,
+            value: $values,
+            boolean: BooleanEnum::Or
+        );
+
+        return $this;
+    }
+
+    /**
+     * Add a where not between clause to the query.
+     *
+     * @param  string  $column
+     * @param  array  $values
+     * @return self
+     */
+    public function whereNotBetween(string $column, array $values): self
+    {
+        $this->wheres[] = new WhereClause(
+            column: $column,
+            operator: OperatorEnum::NotBetween,
+            value: $values,
+            boolean: BooleanEnum::And
+        );
+
+        return $this;
+    }
+
+    /**
+     * Add a or where not between clause to the query.
+     *
+     * @param  string  $column
+     * @param  array  $values
+     * @return self
+     */
+    public function orWhereNotBetween(string $column, array $values): self
+    {
+        $this->wheres[] = new WhereClause(
+            column: $column,
+            operator: OperatorEnum::NotBetween,
+            value: $values,
+            boolean: BooleanEnum::Or
+        );
+
+        return $this;
+    }
+
+    /**
+     * Add a where date clause to the query.
+     *
+     * @param  string  $column
+     * @param  DateTimeInterface|string  $date
+     * @param  OperatorEnum  $operator
+     * @return self
+     */
+    public function whereDate(string $column, DateTimeInterface|string $date, OperatorEnum $operator = OperatorEnum::Equal): self
+    {
+        return $this->where("CAST($column AS DATE)", $date instanceof DateTimeInterface ? $date->format('Y-m-d') : $date, OperatorEnum::Equal);
+    }
+
+    /**
+     * Add a or where date clause to the query.
+     *
+     * @param  string  $column
+     * @param  DateTimeInterface|string  $date
+     * @param  OperatorEnum  $operator
+     * @return self
+     */
+    public function orWhereDate(string $column, DateTimeInterface|string $date, OperatorEnum $operator = OperatorEnum::Equal): self
+    {
+        return $this->orWhere("CAST($column AS DATE)", $date instanceof DateTimeInterface ? $date->format('Y-m-d') : $date, OperatorEnum::Equal);
+    }
+
+    /**
      * Order by column
      *
      * @param  string  $column
@@ -355,6 +458,7 @@ final class GrammarBuilder implements BuilderInterface, OrderByInterface, Select
         foreach ($this->wheres as $index => $whereClause) {
             $placeholder = match ($whereClause->operator) {
                 OperatorEnum::In, OperatorEnum::NotIn => '('.implode(', ', array_fill(0, count($whereClause->value), '?')).')',
+                OperatorEnum::Between, OperatorEnum::NotBetween => '? and ?',
                 default => '?'
             };
 
