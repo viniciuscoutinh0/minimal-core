@@ -135,3 +135,15 @@ it('can parse datetime with milliseconds', function (): void {
 
     expect($user->readed_at)->toBeInstanceOf(Carbon::class);
 });
+
+it('can filter records with where between clause', function (): void {
+    $users = $this->user::newQuery()->whereBetween('id', [1, 2])->get();
+
+    expect($users->count())->toBe(1);
+});
+
+it('can filter records with where not between clause', function (): void {
+    $users = $this->user::newQuery()->whereNotBetween('id', [1, 2])->get();
+
+    expect($users->count())->toBe(0);
+});
