@@ -6,6 +6,7 @@ namespace Viniciuscoutinh0\Minimal\Database\Concerns;
 
 use BackedEnum;
 use Carbon\Carbon;
+use Viniciuscoutinh0\Minimal\Database\Contracts\Castable;
 
 trait HasCastAttribute
 {
@@ -15,6 +16,13 @@ trait HasCastAttribute
      * @var array<string, string>
      */
     protected array $casts = [];
+
+    /**
+     * Cached instances of class-based casters.
+     *
+     * @var array<string, mixed>
+     */
+    protected array $casters = [];
 
     /**
      * Get the attributes that should be cast.
@@ -41,6 +49,10 @@ trait HasCastAttribute
         }
 
         $type = $this->casts[$key];
+
+        if (class_exists($type) && is_subclass_of($type, Castable::class)) {
+            return ($this->casters[$type] ??= new $type)->cast($value, $key);
+        }
 
         if (enum_exists($type) && is_subclass_of($type, BackedEnum::class)) {
             return $type::from($value);
