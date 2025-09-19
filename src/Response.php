@@ -4,61 +4,115 @@ declare(strict_types=1);
 
 namespace Viniciuscoutinh0\Minimal;
 
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Viniciuscoutinh0\Minimal\Concerns\StaticConstruct;
 use Viniciuscoutinh0\Minimal\Enums\HttpStatus;
 
 final class Response
 {
+    use StaticConstruct;
+
     /**
-     * Response Headers.
+     * Response headers.
      *
      * @var array<string,string>
      */
-    private array       $headers = [];
+    private array $headers = [];
 
     /**
      * HTTP Status Code for the response.
      *
      * @var HttpStatus
      */
-    private HttpStatus  $httpStatusCode = HttpStatus::Ok;
+    private HttpStatus $status = HttpStatus::Ok;
 
     /**
      * Response content.
      *
      * @var string
      */
-    private string      $content = '';
+    private string $content = '';
 
     /**
-     * Set the HTTP status code.
+     * Sets a response header.
      *
-     * @param  int  $code
+     * @param string $key
+     * @param string $value
      * @return self
-     * @throws RuntimeException
      */
-    public function httpStatusCode(int $code): self
+    public function header(string $key, string $value): self
     {
-        if ($this->isSentHeaders()) {
-            throw new RuntimeException('Headers already sent');
-        }
-
-        http_response_code($code);
+        $this->headers[$key] = $value;
 
         return $this;
     }
 
     /**
-     * Redirect a specific URL.
+     * Returns all headers defined for the response.
      *
-     * @param  string  $url
-     * @param  int  $code
+     * @return array<string,string>
+     */
+    public function getHeaders(): array
+    {
+        return $this->headers;
+    }
+
+    /**
+     * Sets the HTTP status code for the response.
+     *
+     * @param HttpStatus $httpStatus
+     * @return self
+     */
+    public function statusCode(HttpStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * Returns the current HTTP status code of the response.
+     *
+     * @return int
+     */
+    public function getStatus(): int
+    {
+        return $this->status->value;
+    }
+
+    /**
+     * Sets the content of the response.
+     *
+     * @param string $body
+     * @return self
+     */
+    public function content(string $body): self
+    {
+        $this->content = $body;
+
+        return $this;
+    }
+
+    /**
+     * Returns the content of the response.
+     *
+     * @return string
+     */
+    public function getContent(): string
+    {
+        return $this->content;
+    }
+
+    /**
+     * Sends the HTTP response to the client.
+     *
      * @return void
      */
     public function send(): void
     {
         if (! headers_sent()) {
-            $this->configureResponseHeader();
-            $this->configureHttpStatusCode();
+            $this->sendHeaders();
+            $this->sendHttpStatusCode();
         }
 
         echo $this->content;
@@ -68,46 +122,54 @@ final class Response
      * Sends a JSON response.
      *
      * @param array|Collection $data
-     * @param HttpStatus $httpStatus
-     * @return void
+     * @param HttpStatus $status
+     * @return JsonResponse
      */
-    public function toJson(array|Collection $data, HttpStatus $httpStatus = HttpStatus::Ok): void
+    public function json(array|Collection $data, HttpStatus $status = HttpStatus::Ok): JsonResponse
     {
         $data = $data instanceof Collection ? $data->toArray() : $data;
 
-        $this
-            ->header('accept', 'application/json')
-            ->header('content-type', 'application/json')
-            ->httpStatusCode($httpStatus)
-            ->content(json_encode($data))
-            ->send();
+        return new JsonResponse($data, $status->value, $this->headers);
     }
 
     /**
-     * Configures HTTP headers for the response.
+     * sends HTTP headers for the response.
      *
      * @return void
      */
-    private function configureResponseHeader(): void
+    private function sendHeaders(): void
     {
         if (headers_sent()) {
             return;
         }
 
-        $this->httpStatusCode($code);
-
-        header(header: "Location: {$url}");
-
-        exit;
+        foreach ($this->headers as $key => $value) {
+            header(sprintf('%s: %s', $this->normalizeHeaderKeyName($key), $value));
+        }
     }
 
     /**
-     * Check if headers are already sent.
+     * sends the HTTP status code for the response.
      *
-     * @return bool
+     * @return void
      */
-    private function isSentHeaders(): bool
+    private function sendHttpStatusCode(): void
     {
-        return headers_sent();
+        if (headers_sent()) {
+            return;
+        }
+
+        http_response_code($this->getStatus());
+    }
+
+    /**
+     * Normalizes header names to proper HTTP format.
+     *
+     * @param string $key Header name
+     * @return string Properly formatted header name
+     */
+    private function normalizeHeaderKeyName(string $key): string
+    {
+        return implode('-', array_map('ucfirst', explode('-', $key)));
     }
 }
