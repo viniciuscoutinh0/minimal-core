@@ -47,6 +47,16 @@ final class ServerBag
     }
 
     /**
+     * Returns is request is POST.
+     *
+     * @return bool
+     */
+    public function isPost(): bool
+    {
+        return $this->method() === 'POST';
+    }
+
+    /**
      * Get all parameters.
      *
      * @return array

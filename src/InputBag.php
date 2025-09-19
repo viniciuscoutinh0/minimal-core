@@ -13,6 +13,7 @@ final class InputBag
 
     public function __construct(private array $parameters = [])
     {
+        //
     }
 
     /**
@@ -44,7 +45,9 @@ final class InputBag
      */
     public function get(string $key, mixed $default = null): mixed
     {
-        return $this->parameters[$key] ?? $default;
+        $value = $this->parameters[$key];
+
+        return $value ? $this->sanitizeInput($value) : $default;
     }
 
     /**
@@ -114,5 +117,17 @@ final class InputBag
     public function values(): array
     {
         return array_values($this->parameters);
+    }
+
+    /**
+     * Returns sanitized value.
+     *
+     * @return string
+     */
+    private function sanitizeInput(string $value): string
+    {
+        $value = strip_tags($value);
+
+        return trim($value);
     }
 }

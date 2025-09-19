@@ -4,12 +4,30 @@ declare(strict_types=1);
 
 namespace Viniciuscoutinh0\Minimal;
 
-use RuntimeException;
-use Viniciuscoutinh0\Minimal\Concerns\StaticConstruct;
+use Viniciuscoutinh0\Minimal\Enums\HttpStatus;
 
 final class Response
 {
-    use StaticConstruct;
+    /**
+     * Response Headers.
+     *
+     * @var array<string,string>
+     */
+    private array       $headers = [];
+
+    /**
+     * HTTP Status Code for the response.
+     *
+     * @var HttpStatus
+     */
+    private HttpStatus  $httpStatusCode = HttpStatus::Ok;
+
+    /**
+     * Response content.
+     *
+     * @var string
+     */
+    private string      $content = '';
 
     /**
      * Set the HTTP status code.
@@ -35,12 +53,45 @@ final class Response
      * @param  string  $url
      * @param  int  $code
      * @return void
-     * @throws RuntimeException
      */
-    public function redirect(string $url, int $code = 301): void
+    public function send(): void
     {
-        if ($this->isSentHeaders()) {
-            throw new RuntimeException('Headers already sent');
+        if (! headers_sent()) {
+            $this->configureResponseHeader();
+            $this->configureHttpStatusCode();
+        }
+
+        echo $this->content;
+    }
+
+    /**
+     * Sends a JSON response.
+     *
+     * @param array|Collection $data
+     * @param HttpStatus $httpStatus
+     * @return void
+     */
+    public function toJson(array|Collection $data, HttpStatus $httpStatus = HttpStatus::Ok): void
+    {
+        $data = $data instanceof Collection ? $data->toArray() : $data;
+
+        $this
+            ->header('accept', 'application/json')
+            ->header('content-type', 'application/json')
+            ->httpStatusCode($httpStatus)
+            ->content(json_encode($data))
+            ->send();
+    }
+
+    /**
+     * Configures HTTP headers for the response.
+     *
+     * @return void
+     */
+    private function configureResponseHeader(): void
+    {
+        if (headers_sent()) {
+            return;
         }
 
         $this->httpStatusCode($code);
