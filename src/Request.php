@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Viniciuscoutinh0\Minimal;
 
+use Throwable;
+
 final readonly class Request
 {
     /**
@@ -42,7 +44,11 @@ final readonly class Request
     ) {
         $this->query = new InputBag($get);
 
-        $this->input = new InputBag($post);
+        $this->input = new InputBag(
+            $this->isJson()
+                ? $this->mergeStreamInput($post)
+                : $post
+        );
 
         $this->server = new ServerBag($server);
 
@@ -97,5 +103,32 @@ final readonly class Request
     public function cookie(): InputBag
     {
         return $this->cookie;
+    }
+
+    /**
+     * Returns if request is a Json
+     *
+     * @return bool
+     */
+    public function isJson(): bool
+    {
+        return $this->server()->isPost() && str_contains($this->server()->get('CONTENT_TYPE', ''), '/json');
+    }
+
+    /**
+     * Merge Input Stream fields with $_POST fields
+     *
+     * @param array $post
+     * @return array<string,mixed>
+     */
+    private function mergeStreamInput(array $post): array
+    {
+        try {
+            $input = file_get_contents('php://input') ?? '[]';
+
+            return array_merge($post, json_decode($input, true) ?? []);
+        } catch(Throwable) {
+            return $post;
+        }
     }
 }

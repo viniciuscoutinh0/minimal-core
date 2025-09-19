@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Viniciuscoutinh0\Minimal;
 
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Viniciuscoutinh0\Minimal\Concerns\StaticConstruct;
 use Viniciuscoutinh0\Minimal\Enums\HttpStatus;
 
@@ -120,20 +121,15 @@ final class Response
     /**
      * Sends a JSON response.
      *
-     * @param array|Collection $data
-     * @param HttpStatus $httpStatus
-     * @return void
+     * @param   array|Collection    $data
+     * @param   HttpStatus          $status
+     * @return  JsonResponse
      */
-    public function toJson(array|Collection $data, HttpStatus $httpStatus = HttpStatus::Ok): void
+    public function json(array|Collection $data, HttpStatus $status = HttpStatus::Ok): JsonResponse
     {
         $data = $data instanceof Collection ? $data->toArray() : $data;
 
-        $this
-            ->header('accept', 'application/json')
-            ->header('content-type', 'application/json')
-            ->httpStatusCode($httpStatus)
-            ->content(json_encode($data))
-            ->send();
+        return new JsonResponse($data, $status->value, $this->headers);
     }
 
     /**
