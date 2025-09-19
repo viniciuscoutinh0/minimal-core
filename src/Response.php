@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace Viniciuscoutinh0\Minimal;
 
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Viniciuscoutinh0\Minimal\Concerns\StaticConstruct;
 use Viniciuscoutinh0\Minimal\Enums\HttpStatus;
 
 final class Response
 {
-    use StaticConstruct;
-
     /**
      * Response Headers.
      *
@@ -34,78 +30,28 @@ final class Response
     private string      $content = '';
 
     /**
-     * Sets a response header.
+     * Set the HTTP status code.
      *
-     * @param string $key
-     * @param string $value
-     * @return Response
-     */
-    public function header(string $key, string $value): self
-    {
-        $this->headers[$key] = $value;
-
-        return $this;
-    }
-
-    /**
-     * Returns all headers defined for the response.
-     *
-     * @return array<string,string>
-     */
-    public function getHeaders(): array
-    {
-        return $this->headers;
-    }
-
-    /**
-     * Sets the HTTP status code for the response.
-     *
-     * @param HttpStatus $httpStatus
+     * @param  int  $code
      * @return self
+     * @throws RuntimeException
      */
-    public function httpStatusCode(HttpStatus $httpStatus): self
+    public function httpStatusCode(int $code): self
     {
-        $this->httpStatusCode = $httpStatus;
+        if ($this->isSentHeaders()) {
+            throw new RuntimeException('Headers already sent');
+        }
+
+        http_response_code($code);
 
         return $this;
     }
 
     /**
-     * Returns the current HTTP status code of the response.
+     * Redirect a specific URL.
      *
-     * @return int
-     */
-    public function getHttpStatusCode(): int
-    {
-        return $this->httpStatusCode->value;
-    }
-
-    /**
-     * Sets the content of the response.
-     *
-     * @param string $body
-     * @return self
-     */
-    public function content(string $body): self
-    {
-        $this->content = $body;
-
-        return $this;
-    }
-
-    /**
-     * Returns the content of the response.
-     *
-     * @return string
-     */
-    public function getContent(): string
-    {
-        return $this->content;
-    }
-
-    /**
-     * Sends the HTTP response to the client.
-     *
+     * @param  string  $url
+     * @param  int  $code
      * @return void
      */
     public function send(): void
@@ -121,15 +67,20 @@ final class Response
     /**
      * Sends a JSON response.
      *
-     * @param   array|Collection    $data
-     * @param   HttpStatus          $status
-     * @return  JsonResponse
+     * @param array|Collection $data
+     * @param HttpStatus $httpStatus
+     * @return void
      */
-    public function json(array|Collection $data, HttpStatus $status = HttpStatus::Ok): JsonResponse
+    public function toJson(array|Collection $data, HttpStatus $httpStatus = HttpStatus::Ok): void
     {
         $data = $data instanceof Collection ? $data->toArray() : $data;
 
-        return new JsonResponse($data, $status->value, $this->headers);
+        $this
+            ->header('accept', 'application/json')
+            ->header('content-type', 'application/json')
+            ->httpStatusCode($httpStatus)
+            ->content(json_encode($data))
+            ->send();
     }
 
     /**
@@ -143,35 +94,20 @@ final class Response
             return;
         }
 
-        foreach ($this->headers as $key => $value) {
-            header(
-                sprintf('%s: %s', $this->normalizeHeaderKeyName($key), $value)
-            );
-        }
+        $this->httpStatusCode($code);
+
+        header(header: "Location: {$url}");
+
+        exit;
     }
 
     /**
-     * Configures the HTTP status code for the response.
+     * Check if headers are already sent.
      *
-     * @return void
+     * @return bool
      */
-    private function configureHttpStatusCode(): void
+    private function isSentHeaders(): bool
     {
-        if (headers_sent()) {
-            return;
-        }
-
-        http_response_code($this->getHttpStatusCode());
-    }
-
-    /**
-     * Normalizes header names to proper HTTP format.
-     *
-     * @param string $key
-     * @return string
-     */
-    private function normalizeHeaderKeyName(string $key): string
-    {
-        return implode('-', array_map('ucfirst', explode('-', $key)));
+        return headers_sent();
     }
 }

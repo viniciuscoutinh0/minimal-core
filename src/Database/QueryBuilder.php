@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Viniciuscoutinh0\Minimal\Database;
 
+use DateTimeInterface;
 use PDO;
 use PDOStatement;
 use Viniciuscoutinh0\Minimal\Collection;
@@ -131,6 +132,92 @@ final class QueryBuilder
     public function orWhereNotIn(string $column, array $values): self
     {
         $this->grammar->orWhereNotIn($column, $values);
+
+        return $this;
+    }
+
+    /**
+     * Add a where between clause to the query.
+     *
+     * @param  string  $column
+     * @param  array  $values
+     * @return self
+     */
+    public function whereBetween(string $column, array $values): self
+    {
+        $this->grammar->whereBetween($column, $values);
+
+        return $this;
+    }
+
+    /**
+     * Add a where not between clause to the query.
+     *
+     * @param  string  $column
+     * @param  array  $values
+     * @return self
+     */
+    public function whereNotBetween(string $column, array $values): self
+    {
+        $this->grammar->whereNotBetween($column, $values);
+
+        return $this;
+    }
+
+    /**
+     * Add a or where not between clause to the query.
+     *
+     * @param  string  $column
+     * @param  array  $values
+     * @return self
+     */
+    public function orWhereNotBetween(string $column, array $values): self
+    {
+        $this->grammar->orWhereNotBetween($column, $values);
+
+        return $this;
+    }
+
+    /**
+     * Add a or where between clause to the query.
+     *
+     * @param  string  $column
+     * @param  array  $values
+     * @return self
+     */
+    public function orWhereBetween(string $column, array $values): self
+    {
+        $this->grammar->orWhereBetween($column, $values);
+
+        return $this;
+    }
+
+    /**
+     * Add a where date clause to the query.
+     *
+     * @param  string  $column
+     * @param  DateTimeInterface|string  $date
+     * @param  OperatorEnum  $operator
+     * @return self
+     */
+    public function whereDate(string $column, DateTimeInterface|string $date, OperatorEnum $operator = OperatorEnum::Equal): self
+    {
+        $this->grammar->whereDate($column, $date, $operator);
+
+        return $this;
+    }
+
+    /**
+     * Add a or where date clause to the query.
+     *
+     * @param  string  $column
+     * @param  DateTimeInterface|string  $date
+     * @param  OperatorEnum  $operator
+     * @return self
+     */
+    public function orWhereDate(string $column, DateTimeInterface|string $date, OperatorEnum $operator = OperatorEnum::Equal): self
+    {
+        $this->grammar->orWhereDate($column, $date, $operator);
 
         return $this;
     }

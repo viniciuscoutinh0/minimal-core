@@ -110,3 +110,27 @@ it('can add orWhere in query', function (): void {
 
     expect($query)->toBe('select * from users where foo = ? or baz in (?, ?)');
 });
+
+it('can add between clause in query', function (): void {
+    $query = $this->grammar->where('foo', 'bar')->whereBetween('baz', ['qux', 'quux'])->toSql();
+
+    expect($query)->toBe('select * from users where foo = ? and baz between ? and ?');
+});
+
+it('can add orWhere between clause in query', function (): void {
+    $query = $this->grammar->where('foo', 'bar')->orWhereBetween('baz', ['qux', 'quux'])->toSql();
+
+    expect($query)->toBe('select * from users where foo = ? or baz between ? and ?');
+});
+
+it('can add where not between clause in query', function (): void {
+    $query = $this->grammar->where('foo', 'bar')->whereNotBetween('baz', ['qux', 'quux'])->toSql();
+
+    expect($query)->toBe('select * from users where foo = ? and baz not between ? and ?');
+});
+
+it('can add orWhere not between clause in query', function (): void {
+    $query = $this->grammar->where('foo', 'bar')->orWhereNotBetween('baz', ['qux', 'quux'])->toSql();
+
+    expect($query)->toBe('select * from users where foo = ? or baz not between ? and ?');
+});
