@@ -133,7 +133,8 @@ final class Response
         $this
             ->header('content-type', 'application/json')
             ->statusCode($status)
-            ->content(json_encode($content));
+            ->content(json_encode($content))
+            ->send();
 
         return $this;
     }
