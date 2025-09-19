@@ -112,7 +112,7 @@ final readonly class Request
      */
     public function isJson(): bool
     {
-        return $this->server()->isPost() && str_contains($this->server()->get('CONTENT_TYPE', ''), '/json');
+        return $this->server->isPost() && str_contains($this->server->get('CONTENT_TYPE', ''), '/json');
     }
 
     /**
