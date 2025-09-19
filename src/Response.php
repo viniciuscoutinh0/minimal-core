@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Viniciuscoutinh0\Minimal;
 
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Viniciuscoutinh0\Minimal\Concerns\StaticConstruct;
 use Viniciuscoutinh0\Minimal\Enums\HttpStatus;
 
@@ -106,9 +105,9 @@ final class Response
     /**
      * Sends the HTTP response to the client.
      *
-     * @return void
+     * @return self
      */
-    public function send(): void
+    public function send(): self
     {
         if (! headers_sent()) {
             $this->sendHeaders();
@@ -116,6 +115,8 @@ final class Response
         }
 
         echo $this->content;
+
+        return $this;
     }
 
     /**
@@ -123,13 +124,18 @@ final class Response
      *
      * @param array|Collection $data
      * @param HttpStatus $status
-     * @return JsonResponse
+     * @return self
      */
-    public function json(array|Collection $data, HttpStatus $status = HttpStatus::Ok): JsonResponse
+    public function json(array|Collection $data, HttpStatus $status = HttpStatus::Ok): self
     {
-        $data = $data instanceof Collection ? $data->toArray() : $data;
+        $content = $data instanceof Collection ? $data->toArray() : $data;
 
-        return new JsonResponse($data, $status->value, $this->headers);
+        $this
+            ->header('content-type', 'application/json')
+            ->statusCode($status)
+            ->content(json_encode($content));
+
+        return $this;
     }
 
     /**
