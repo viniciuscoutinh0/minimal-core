@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Viniciuscoutinh0\Minimal;
 
+use Viniciuscoutinh0\Minimal\Concerns\StaticConstruct;
 use Viniciuscoutinh0\Minimal\Enums\HttpStatus;
 
 final class Response
 {
+    use StaticConstruct;
+
     /**
      * Response Headers.
      *
