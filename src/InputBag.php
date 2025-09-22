@@ -45,9 +45,9 @@ final class InputBag
      */
     public function get(string $key, mixed $default = null): mixed
     {
-        $value = $this->parameters[$key];
-
-        return $value ? $this->sanitizeInput($value) : $default;
+        return isset($this->parameters[$key])
+            ? $this->sanitizeInput($this->parameters[$key])
+            : $default;
     }
 
     /**
